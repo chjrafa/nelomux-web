@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nelomux · Sistemas a medida y automatización de procesos</title>
+<meta name="description" content="Nelomux diseña sistemas y automatizaciones a medida: CRM con setters, bots de WhatsApp e Instagram, facturación, nómina, reportes de campo y tableros. Todo tu negocio en un solo sistema.">
+<meta name="theme-color" content="#14161b">
+<link rel="canonical" href="https://nelomux.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nelomux.com/">
+<meta property="og:site_name" content="Nelomux">
+<meta property="og:title" content="Nelomux · Todo tu negocio en un solo sistema">
+<meta property="og:description" content="Sistemas a medida y automatización de procesos: prospectos que llegan solos, setters que agendan citas, facturas que se cobran, reportes que se aprueban.">
+<meta property="og:image" content="https://nelomux.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nelomux.com/og-image.png">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: el papel claro del manual de marca. El héroe abre con el logo tal como va en la factura (símbolo en 3D sólido + nombre) y, a la derecha, los documentos que produce el sistema. Bandas oscuras solo para el mux y el contacto. */
+:root{
+  --surface:#f6f5f1; --raised:#ffffff; --line:#dedcd5; --line-2:#cfccc3;
+  --ink:#14161b; --muted:#5a5f6a; --faint:#6b707b;
+  --brand:#ff5b1f; --brand-ink:#b5390b; --brand-tint:#ffe4d8; --on-brand:#14161b;
+  --tile:#14161b; --tile-2:#1d2028; --paper-dk:#eef0f4; --muted-dk:#a2a8b4;
+  --signal:#2f45f5; --ok:#1f7a4d; --ok-tint:#dcf1e5;
+  --font-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --font-sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(20,22,27,.05),0 18px 40px -22px rgba(20,22,27,.28);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+section[id],header[id]{scroll-margin-top:88px}
+body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--brand-tint)}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:600}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:6px}
+.label{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.kick{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-ink);font-weight:500}
+.kick::before{content:"";width:22px;height:14px;flex:none;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 14'%3E%3Cpath d='M2 2h3c4 0 4 5 8 5M2 7h11M2 12h3c4 0 4-5 8-5M13 7h3' fill='none' stroke='%23b5390b' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='18.5' cy='7' r='2.2' fill='%23ff5b1f'/%3E%3C/svg%3E")}
+.dark .kick{color:#ff9468}
+.card{background:var(--raised);border:1px solid var(--line);border-radius:var(--r-lg)}
+
+/* Nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(246,245,241,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .bar{display:flex;align-items:center;gap:20px;height:68px}
+.nav .home{display:flex;align-items:center;min-height:44px}
+.nav .logo{height:30px;width:auto;display:block}
+.nav ul{display:flex;gap:2px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{display:flex;align-items:center;min-height:44px;text-decoration:none;font-size:15px;color:var(--muted);padding:0 12px;border-radius:8px}
+.nav ul a:hover{color:var(--ink);background:rgba(20,22,27,.05)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:600 15px/1 var(--font-sans);text-decoration:none;border-radius:var(--r-md);min-height:48px;padding:0 20px;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:transform .2s,background .2s,border-color .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--brand);color:var(--on-brand)}
+.btn.primary:hover{background:#ff7240}
+.btn.dark{background:var(--ink);color:var(--paper-dk)}
+.btn.ghost{border-color:var(--line-2);background:var(--raised);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--ink)}
+.btn svg{width:16px;height:16px}
+.nav .btn{min-height:44px;padding:0 16px;font-size:14px}
+.menu-btn{display:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line-2);background:var(--raised);cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:6px;flex:none}
+.menu-btn span{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink);transition:transform .25s}
+.menu-btn[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
+.menu[hidden]{display:none}
+.menu{padding:8px 0 16px;display:grid;gap:2px}
+.menu a{text-decoration:none;padding:14px 4px;font-size:17px;border-bottom:1px solid var(--line)}
+.menu .btn{margin-top:10px;border-bottom:0}
+
+/* Héroe */
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:40px;align-items:center;padding-block:clamp(40px,6vw,84px) clamp(48px,6vw,88px)}
+.sym3d{position:relative;width:100%;max-width:560px;aspect-ratio:1/1;justify-self:end;touch-action:pan-y}
+.sym3d canvas,.sym3d .fallback{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sym3d .fallback{display:grid;place-items:center}
+.sym3d .fallback svg{width:66%;height:auto}
+.sym3d.ready .fallback{display:none}
+.sym3d::after{content:"";position:absolute;left:22%;right:22%;bottom:5%;height:7%;border-radius:50%;background:radial-gradient(closest-side,rgba(20,22,27,.3),transparent);z-index:-1}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,4.6vw,60px);line-height:1.04;letter-spacing:-.03em;margin-top:18px}
+.hero h1 em{font-style:normal;color:var(--brand-ink)}
+.hero .lede{margin-top:20px;font-size:clamp(17px,1.4vw,19px);color:var(--muted);max-width:52ch}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:28px;padding:0;list-style:none}
+.hero .meta li{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.hero .meta li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand)}
+
+/* Sectores */
+.sectors{border-block:1px solid var(--line);background:var(--raised)}
+.sectors .wrap{display:flex;align-items:center;gap:14px 40px;flex-wrap:wrap;padding-block:22px}
+.sectors ul{display:flex;flex-wrap:wrap;gap:10px 30px;list-style:none;margin:0;padding:0}
+.sectors li{display:flex;align-items:center;gap:10px;font-weight:500;font-size:16px}
+.sectors li::before{content:"";width:8px;height:8px;border-radius:50%;border:2px solid var(--brand)}
+
+/* Secciones */
+section.block{padding-block:clamp(72px,9vw,120px)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 56px;align-items:end;margin-bottom:clamp(30px,4.5vw,48px)}
+.sec-head h2{font-family:var(--font-display);font-size:clamp(28px,3.5vw,44px);line-height:1.08;letter-spacing:-.028em;margin-top:14px}
+.sec-head p{color:var(--muted);max-width:56ch}
+
+/* Catálogo de soluciones */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.filters button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--raised);font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.filters button span{font:500 11px/1 var(--font-mono);color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper-dk)}
+.filters button[aria-pressed="true"] span{color:var(--muted-dk)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:-6px 0 22px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.sol{padding:24px;display:grid;gap:10px;align-content:start;transition:transform .25s,box-shadow .25s,border-color .25s}
+.sol:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--line-2)}
+.sol[hidden]{display:none}
+.sol .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px}
+.sol .ic{width:42px;height:42px;border-radius:10px;background:var(--tile);display:grid;place-items:center}
+.sol .ic svg{width:21px;height:21px;stroke:#ff6a33;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sol h3{font-size:18.5px;line-height:1.3}
+.sol p{color:var(--muted);font-size:15.5px}
+.sol .area{font:500 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+
+/* Casos */
+.cases{display:grid;grid-template-columns:292px minmax(0,1fr);gap:16px;align-items:start}
+.tabs{display:grid;gap:4px;padding:8px}
+.tab{display:grid;gap:4px;text-align:left;background:transparent;border:1px solid transparent;border-radius:10px;padding:13px 14px;cursor:pointer}
+.tab:hover{background:var(--surface)}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);box-shadow:inset 3px 0 0 var(--brand)}
+.tab i{font:500 11px/1 var(--font-mono);font-style:normal;letter-spacing:.12em;color:var(--brand-ink);display:flex;justify-content:space-between;gap:8px}
+.tab i em{font-style:normal;color:var(--faint)}
+.tab b{font-weight:600;font-size:15.5px;line-height:1.3}
+.case{padding:clamp(20px,3vw,32px);display:grid;gap:24px;min-width:0}
+.case-top{display:flex;flex-wrap:wrap;gap:12px 20px;justify-content:space-between;align-items:flex-start}
+.case-top h3{font-family:var(--font-display);font-size:clamp(20px,2.2vw,27px);line-height:1.15;letter-spacing:-.02em;max-width:28ch;margin-top:10px}
+.case .sum{color:var(--muted);max-width:68ch;margin-top:-8px}
+.flow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(112px,1fr);gap:10px;overflow-x:auto;padding:2px 2px 8px}
+.fstep{position:relative;display:grid;gap:10px;align-content:start;text-align:left;background:transparent;border:0;padding:0;cursor:pointer;min-width:0}
+.fstep .node{position:relative;height:40px;display:flex;align-items:center}
+.fstep .node::before{content:"";position:absolute;left:20px;right:-10px;top:50%;height:2px;background:var(--line)}
+.fstep .node::after{content:"";position:absolute;left:20px;top:50%;height:2px;width:0;background:var(--brand);transition:width .5s}
+.fstep.done .node::after{width:calc(100% - 10px)}
+.fstep:last-child .node::before,.fstep:last-child .node::after{display:none}
+.fstep .n{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:500 12px/1 var(--font-mono);color:var(--muted);background:var(--raised);border:1.5px solid var(--line-2);transition:all .3s}
+.fstep.done .n{border-color:var(--brand);color:var(--brand-ink)}
+.fstep.on .n{background:var(--brand);border-color:var(--brand);color:var(--on-brand);box-shadow:0 0 0 6px rgba(255,91,31,.16)}
+.fstep .t{font-size:14px;line-height:1.35;color:var(--muted);padding-right:6px}
+.fstep.on .t,.fstep.done .t{color:var(--ink)}
+.case-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.feed{border-radius:var(--r-md);background:var(--tile);color:var(--paper-dk);padding:16px;display:grid;gap:8px;align-content:start;min-height:280px;min-width:0}
+.feed .label{color:var(--muted-dk)}
+.feed-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.feed-h .live{display:inline-flex;align-items:center;gap:7px;font:500 11px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:#6fd49a}
+.feed-h .live::before{content:"";width:7px;height:7px;border-radius:50%;background:#6fd49a}
+.ev{display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;padding:10px 12px;border-radius:8px;background:var(--tile-2);border:1px solid transparent;font-size:14px;line-height:1.4;transition:opacity .4s,border-color .4s,background .4s}
+.ev time{font:500 12px/1.4 var(--font-mono);color:var(--muted-dk);font-variant-numeric:tabular-nums}
+.ev.pending{opacity:.3}
+.ev.now{border-color:rgba(255,106,51,.55);background:#2a1a12}
+.ev.now time{color:#ff9468}
+.built{display:grid;gap:14px;align-content:start;min-width:0}
+.built ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.built li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;font-size:15px}
+.built li svg{width:18px;height:18px;margin-top:3px;stroke:var(--brand-ink);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.kpi{display:flex;align-items:baseline;gap:12px;padding:14px 18px;border-radius:var(--r-md);background:var(--brand-tint)}
+.kpi b{font:500 34px/1 var(--font-mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:14px;color:var(--ink)}
+.case-ctrl{display:flex;gap:10px;align-items:center}
+.case-ctrl button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line-2);background:var(--raised);cursor:pointer;display:grid;place-items:center}
+.case-ctrl button svg{width:14px;height:14px;fill:var(--ink)}
+.case-ctrl span{font:500 11px/1 var(--font-mono);color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
+
+/* Cifras */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat{padding:28px 26px;display:grid;gap:8px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat b{font:500 clamp(34px,4.2vw,52px)/1 var(--font-mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:15px}
+.stat em{font-style:normal;font:500 11px/1.3 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--brand-ink)}
+
+/* Banda oscura: el mux */
+.dark{background:var(--tile);color:var(--paper-dk)}
+.brand{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:24px 48px;align-items:center}
+.brand .copy{display:grid;gap:18px}
+.brand h2{font-family:var(--font-display);font-size:clamp(28px,3.5vw,44px);line-height:1.08;letter-spacing:-.028em}
+.brand .copy > p{color:var(--muted-dk)}
+.brand .copy > p b{color:var(--paper-dk)}
+.values{display:grid;gap:12px;margin-top:6px}
+.value{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start;font-size:15.5px}
+.value svg{width:22px;height:14px;margin-top:5px}
+.value b{display:block;font-weight:600}
+.value span{color:var(--muted-dk)}
+.muxbox{background:var(--tile-2);border:1px solid #2c313b;border-radius:var(--r-lg);padding:clamp(14px,2.4vw,26px);display:grid;gap:14px;min-width:0}
+.muxbox svg{width:100%;height:auto;display:block;overflow:visible}
+.mux .wire{fill:none;stroke:rgba(255,255,255,.16);stroke-width:2.5;stroke-linecap:round;transition:stroke .3s,opacity .3s,stroke-width .3s}
+.mux .dot{fill:#2b2f39;stroke:rgba(255,255,255,.3);stroke-width:1.5;transition:fill .3s}
+.mux .lbl{fill:var(--muted-dk);font:500 21px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;transition:fill .3s}
+.mux .in{cursor:pointer;outline:none}
+.mux .in .hit{fill:transparent}
+.mux .in.on .wire,.mux .in:focus-visible .wire{stroke:var(--brand);stroke-width:3.5}
+.mux .in.on .dot{fill:var(--brand);stroke:var(--brand)}
+.mux .in.on .lbl{fill:var(--paper-dk)}
+.mux.focus .in:not(.on) .wire{opacity:.35}
+.mux .outwire{fill:none;stroke:var(--brand);stroke-width:5;stroke-linecap:round}
+.mux .pulse{fill:#ffd2bd}
+.mux .outlbl{fill:var(--paper-dk);font:500 21px var(--font-mono);letter-spacing:.1em;text-transform:uppercase}
+.mux .sub{fill:var(--muted-dk);font:400 18px var(--font-sans)}
+.muxchips{display:none;flex-wrap:wrap;gap:8px}
+.muxchips button{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid #2c313b;background:transparent;font:500 12px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.muxchips button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.muxcap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:14px 16px;border-radius:10px;background:var(--tile);border:1px solid #2c313b;min-height:64px}
+.muxcap b{font:500 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--on-brand);background:var(--brand);padding:6px 8px;border-radius:6px}
+.muxcap span{font-size:15px}
+
+/* Proceso */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.step{padding:26px;display:grid;gap:12px;align-content:start;position:relative;overflow:hidden}
+.step .n{width:40px;height:40px;border-radius:50%;border:2px solid var(--brand);display:grid;place-items:center;font:500 13px/1 var(--font-mono);color:var(--brand-ink)}
+.step:last-child .n{background:var(--brand);color:var(--on-brand)}
+.step h3{font-size:19px}
+.step p{color:var(--muted);font-size:15.5px}
+.step .meta{margin-top:6px;padding-top:14px;border-top:1px solid var(--line);font:500 11px/1.4 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.step .bar{position:absolute;left:0;top:0;height:3px;width:var(--p,0%);background:var(--brand);transition:width .2s linear}
+
+/* Principios */
+.tenets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.tenet{display:grid;gap:10px;align-content:start;padding-top:20px;border-top:2px solid var(--line)}
+.tenet:first-child{border-top-color:var(--brand)}
+.tenet h3{font-size:18px}
+.tenet p{color:var(--muted);font-size:15.5px}
+
+/* Contacto */
+.contact{padding-block:clamp(72px,9vw,112px)}
+.contact .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:end}
+.contact h2{font-family:var(--font-display);font-size:clamp(30px,4.2vw,54px);line-height:1.04;letter-spacing:-.03em;margin-top:14px}
+.contact .grid > div:first-child p{margin-top:18px;font-size:18px;max-width:46ch;color:var(--muted-dk)}
+.chan{display:grid;gap:10px}
+.chan .row{display:flex;align-items:center;gap:12px;background:var(--tile-2);border:1px solid #2c313b;border-radius:12px;padding:12px 12px 12px 18px;min-width:0}
+.chan .row div{display:grid;gap:3px;min-width:0;flex:1}
+.chan .row .v{font:500 15px/1.3 var(--font-mono);overflow-wrap:anywhere;user-select:all}
+.chan .row .label{color:var(--muted-dk);font-size:11px}
+.chan .row button,.chan .row a.go{font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid #3a3f4a;background:transparent;color:var(--paper-dk);min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:8px;cursor:pointer;text-decoration:none;flex:none}
+.chan .row a.go{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+
+footer.site{background:var(--tile);color:var(--paper-dk);border-top:1px solid #2c313b}
+footer.site .foot{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(4,minmax(0,1fr));gap:28px;padding-block:40px 28px}
+footer.site .logo{height:34px;width:auto;display:block}
+footer.site .tag{margin-top:14px;font-family:var(--font-display);font-weight:500;font-size:18px;letter-spacing:-.01em;max-width:22ch;line-height:1.3}
+footer.site h3{font:500 11px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted-dk);margin-bottom:12px}
+footer.site ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+footer.site li a,footer.site li span{display:inline-flex;align-items:center;min-height:40px;color:var(--muted-dk);text-decoration:none;font-size:15px}
+footer.site li a:hover{color:var(--paper-dk)}
+footer.site .legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding-block:18px 32px;border-top:1px solid #2c313b;color:var(--muted-dk);font-size:13px}
+
+.wa-float{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;align-items:center;gap:10px;height:54px;padding:0 18px 0 14px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;background:var(--ink);color:var(--paper-dk);box-shadow:0 14px 30px -12px rgba(20,22,27,.55);transition:transform .2s,opacity .3s}
+.wa-float:hover{transform:translateY(-2px)}
+.wa-float svg{width:24px;height:24px;flex:none}
+.wa-float.hide{opacity:0;pointer-events:none;transform:translateY(10px)}
+
+.js .rise{transition:opacity .7s ease,transform .7s ease}
+.js .rise.pre{opacity:.001;transform:translateY(22px)}
+
+@media (max-width:1060px){
+  .hero .wrap{grid-template-columns:1fr}
+  .sym3d{justify-self:center;max-width:420px;order:-1;margin-block:-20px -10px}
+  .sec-head{grid-template-columns:1fr}
+  .sols{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cases{grid-template-columns:1fr}
+  .tabs{grid-auto-flow:column;grid-auto-columns:minmax(210px,1fr);overflow-x:auto}
+  .tab[aria-selected="true"]{box-shadow:inset 0 -3px 0 var(--brand)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat:nth-child(3){border-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .steps,.tenets{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brand,.contact .grid{grid-template-columns:1fr}
+  footer.site .foot{grid-template-columns:1fr 1fr}
+  footer.site .foot > div:first-child{grid-column:1/-1}
+  .nav ul{display:none}
+  .menu-btn{margin-left:auto}
+  .menu-btn{display:flex}
+}
+@media (max-width:680px){
+  .nav .bar > .btn{display:none}
+  .sols,.case-grid,.steps,.tenets{grid-template-columns:1fr}
+  .sym3d{max-width:300px}
+  .flow{grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;gap:14px;padding:0}
+  .fstep{grid-template-columns:40px minmax(0,1fr);align-items:center;gap:14px}
+  .fstep .node::before,.fstep .node::after{display:none}
+  .fstep::before{content:"";position:absolute;left:19px;top:42px;height:14px;width:2px;background:var(--line)}
+  .fstep.done::before{background:var(--brand)}
+  .fstep:last-child::before{display:none}
+  .fstep .t{font-size:15px}
+  .muxchips{display:flex}
+  .mux .lbl,.mux .outlbl,.mux .sub{display:none}
+  .mux .in{pointer-events:none}
+  .wa-float span{display:none}
+  .wa-float{width:54px;padding:0;justify-content:center}
+  .chan .row{flex-wrap:wrap}
+  .stat{padding:22px 18px}
+}
+@media (max-width:420px){
+  .nav .bar{gap:8px}
+  .nav .logo{height:26px}
+  footer.site .foot{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rise.pre{opacity:1;transform:none}}
+
+/* ===== Estilo de la factura Nelomux: banda negra, nombre en dos tonos, puntos naranjas, filete naranja ===== */
+.wm{font-family:var(--font-display);font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1}
+.wm b{font-weight:600;color:var(--brand)}
+.nav{background:var(--tile);border-bottom:1px solid #23262e;backdrop-filter:none;-webkit-backdrop-filter:none}
+.nav .home{gap:10px;text-decoration:none}
+.nav .home .mark{width:30px;height:30px;display:block}
+.nav .home .wm{font-size:19px;letter-spacing:.01em}
+.nav ul a{color:var(--muted-dk)}
+.nav ul a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.menu-btn{background:transparent;border-color:#3a3f4a}
+.menu-btn span{background:#fff}
+.menu a{color:#fff;border-bottom-color:#23262e}
+.hero{background:var(--tile);color:#fff;border-bottom:5px solid var(--brand);position:relative;overflow:hidden}
+.hero .kick{color:#ff9468}
+.hero .kick::before{filter:brightness(1.6)}
+.hero-wm{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;line-height:.9;font-size:clamp(44px,7vw,96px);color:#fff;margin-bottom:clamp(22px,3vw,34px);perspective:1100px;touch-action:pan-y;user-select:none;--wy:0deg;--wx:0deg;--sx:0;--sy:1}
+.hero-wm .in{display:inline-block;transform-origin:50% 60%;transform:rotateY(var(--wy)) rotateX(var(--wx));transform-style:preserve-3d;will-change:transform}
+.hero-wm b{font-weight:600;color:var(--brand)}
+.hero-wm span{display:inline-block;transform:translateY(var(--f,0px));text-shadow:calc(var(--sx)*1px) calc(var(--sy)*1px) 0 #a9aeb8,calc(var(--sx)*2px) calc(var(--sy)*2px) 0 #7d828d,calc(var(--sx)*3px) calc(var(--sy)*3px) 0 #5a5f6a,calc(var(--sx)*4px) calc(var(--sy)*4px) 0 #3d414a,calc(var(--sx)*5px) calc(var(--sy)*5px) 0 #2a2d34,calc(var(--sx)*6px) calc(var(--sy)*6px) 0 #1b1d22,calc(var(--sx)*10px) calc(var(--sy)*14px) 20px rgba(0,0,0,.55),0 28px 56px rgba(0,0,0,.4)}
+.hero-wm b span{text-shadow:calc(var(--sx)*1px) calc(var(--sy)*1px) 0 #d8440f,calc(var(--sx)*2px) calc(var(--sy)*2px) 0 #b73a0c,calc(var(--sx)*3px) calc(var(--sy)*3px) 0 #96300a,calc(var(--sx)*4px) calc(var(--sy)*4px) 0 #762507,calc(var(--sx)*5px) calc(var(--sy)*5px) 0 #5a1c05,calc(var(--sx)*6px) calc(var(--sy)*6px) 0 #421403,calc(var(--sx)*10px) calc(var(--sy)*14px) 20px rgba(0,0,0,.5),0 0 34px rgba(255,91,31,.32)}
+.hero h1{color:#fff;font-size:clamp(26px,3vw,40px);margin-top:14px}
+.hero h1 em{color:var(--brand)}
+.hero .lede{color:var(--muted-dk)}
+.hero .btn.ghost{background:transparent;border-color:#3a3f4a;color:#fff}
+.hero .btn.ghost:hover{border-color:#fff}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:30px 0 0;border:1px solid #2c313b;border-radius:8px;max-width:560px}
+.fields div{padding:12px 14px;border-left:1px solid #2c313b;min-width:0}
+.fields div:first-child{border-left:0}
+.fields dt{font:500 10px/1 var(--font-mono);letter-spacing:.14em;color:var(--muted-dk)}
+.fields dd{margin:8px 0 0;font:500 13px/1.3 var(--font-mono);color:#fff}
+.hero .sym3d{isolation:isolate}
+.sym3d .dots{position:absolute;inset:6% 0 6% 8%;background-image:radial-gradient(circle,var(--brand) 1.6px,transparent 2px);background-size:22px 22px;opacity:.7;-webkit-mask-image:radial-gradient(closest-side,#000 40%,transparent 100%);mask-image:radial-gradient(closest-side,#000 40%,transparent 100%);z-index:-1}
+.sym3d::after{background:radial-gradient(closest-side,rgba(255,91,31,.28),transparent);bottom:2%;height:9%}
+footer.site .wm.big{font-size:28px;display:inline-block;letter-spacing:.01em}
+footer.site .legal b{color:#fff;font-weight:600}
+@media (max-width:1060px){.hero .sym3d{margin-block:-10px -30px}.hero-wm{text-align:center}.hero-wm .in{transform-origin:50% 60%}}
+/* Portada en una sola columna en todos los tamaños: símbolo arriba, NELOMUX centrado, texto debajo */
+.hero .wrap{grid-template-columns:minmax(0,1fr);gap:0;justify-items:center;padding-block:clamp(24px,4vw,48px) clamp(48px,6vw,80px)}
+.hero .wrap > .rise:first-child{width:100%;max-width:900px}
+.hero .sym3d{order:-1;justify-self:center;max-width:min(440px,100%);margin-block:-10px -30px}
+.hero-wm{text-align:center}
+@media (max-width:560px){.fields{grid-template-columns:1fr}.fields div{border-left:0;border-top:1px solid #2c313b}.fields div:first-child{border-top:0}.nav .home .wm{font-size:16px}.nav .home .mark{width:26px;height:26px}}
+
+.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font:500 10.5px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:6px;background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.pill.ok{background:var(--ok-tint);color:var(--ok);border-color:transparent}
+.pill.brand{background:var(--brand-tint);color:var(--brand-ink);border-color:transparent}
+.hero .flows{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hero > .wrap{position:relative;z-index:1}
+/* ===== Profundidad y sombras ===== */
+.hero h1{text-shadow:0 2px 0 rgba(0,0,0,.35),0 16px 34px rgba(0,0,0,.5)}
+.hero h1 em{text-shadow:0 2px 0 #8a2d0a,0 0 28px rgba(255,91,31,.3),0 16px 34px rgba(0,0,0,.5)}
+.hero .kick{text-shadow:0 0 14px rgba(255,91,31,.35)}
+.sym3d canvas{filter:drop-shadow(0 36px 40px rgba(0,0,0,.6)) drop-shadow(0 0 46px rgba(255,91,31,.22))}
+.sym3d::after{left:26%;right:26%;bottom:3%;height:7%;background:radial-gradient(closest-side,rgba(255,91,31,.38),rgba(0,0,0,.35) 60%,transparent)}
+.nav .home .mark{filter:drop-shadow(0 2px 3px rgba(0,0,0,.6)) drop-shadow(0 0 8px rgba(255,91,31,.45))}
+.wm{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #262930,3px 3px 0 #15171c,0 6px 14px rgba(0,0,0,.6)}
+.wm b{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,0 0 16px rgba(255,91,31,.35),0 6px 14px rgba(0,0,0,.5)}
+.btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 0 #b5390b,0 12px 26px -10px rgba(255,91,31,.75)}
+.btn.primary:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+.sec-head h2,.stat b{text-shadow:0 1px 0 #fff,0 2px 1px rgba(20,22,27,.10),0 10px 20px rgba(20,22,27,.08)}
+.dark h2,.contact h2{text-shadow:0 2px 0 rgba(0,0,0,.4),0 16px 34px rgba(0,0,0,.55)}
+.card{box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 1px 2px rgba(20,22,27,.05),0 14px 30px -24px rgba(20,22,27,.35)}
+.sol .ic{background:linear-gradient(160deg,#262a33,#101216);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 16px -8px rgba(20,22,27,.7)}
+.sol .ic svg{filter:drop-shadow(0 0 4px rgba(255,106,51,.45))}
+.muxbox{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 30px 60px -30px rgba(0,0,0,.8)}
+.mux use,.mux rect[rx="20"]{filter:drop-shadow(0 8px 14px rgba(0,0,0,.6))}
+.kpi b{text-shadow:0 1px 0 #fff,0 8px 18px rgba(181,57,11,.2)}
+footer.site .wm.big{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #262930,3px 3px 0 #15171c,4px 4px 0 #0d0e12,0 10px 20px rgba(0,0,0,.6)}
+@media (prefers-reduced-motion:reduce){.hero-wm{--sx:.6;--sy:.8}}
+
+/* ===== Ajustes: sombra en NELOMUX, sin óvalo bajo el símbolo ===== */
+.sym3d::after{display:none}
+.hero-wm{position:relative}
+.hero-wm::after{content:"";display:block;width:min(70%,620px);height:26px;margin:-4px auto 0;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.75),rgba(0,0,0,.35) 55%,transparent);filter:blur(3px);transform:translateX(calc(var(--sx)*-10px)) scaleX(calc(1 - (var(--sx) * var(--sx)) * .15))}
+.hero-wm .in{filter:drop-shadow(0 18px 18px rgba(0,0,0,.55))}
+.bgflows{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+
+/* Pie interactivo */
+footer.site .fl{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0;background:none;border:0;color:var(--muted-dk);text-decoration:none;font:inherit;font-size:15px;cursor:pointer;text-align:left;transition:color .2s,transform .2s}
+footer.site .fl::after{content:"";position:absolute;left:0;bottom:8px;height:1px;width:0;background:var(--brand);transition:width .25s}
+footer.site .fl:hover,footer.site .fl:focus-visible{color:#fff;transform:translateX(3px)}
+footer.site .fl:hover::after,footer.site .fl:focus-visible::after{width:100%}
+footer.site .fl .ar{width:13px;height:13px;fill:none;stroke:var(--brand);stroke-width:2;stroke-linecap:round;opacity:0;transform:translateX(-6px);transition:opacity .2s,transform .2s;flex:none}
+footer.site .fl:hover .ar,footer.site .fl:focus-visible .ar{opacity:1;transform:none}
+footer.site .fl.on{color:#fff}
+footer.site .fl.on::before{content:"";position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--brand);box-shadow:0 0 8px rgba(255,91,31,.8)}
+footer.site .fl .hint{font:500 10px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--brand);opacity:0;transition:opacity .2s}
+footer.site .fl:hover .hint,footer.site .fl:focus-visible .hint,footer.site .fl.copied .hint{opacity:1}
+footer.site .wmlink{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;transition:transform .3s}
+footer.site .wmlink:hover{transform:translateY(-2px) scale(1.03)}
+footer.site .foot-cta{margin-top:18px;min-height:44px;font-size:14px}
+footer.site nav{display:block}
+.sol.flash{animation:flash 1.6s ease}
+@keyframes flash{0%,100%{box-shadow:var(--shadow)}25%,60%{box-shadow:0 0 0 3px var(--brand),0 20px 40px -20px rgba(255,91,31,.6)}}
+@media (max-width:1060px){footer.site .foot{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){footer.site .foot{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="mk" viewBox="0 0 48 48"><path d="M10 14H15C22.5 14 23 24 30 24M10 24H30M10 34H15C22.5 34 23 24 30 24M30 24H34" fill="none" stroke="#FF5B1F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="14" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="24" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="34" r="2.6" fill="#FF5B1F"/><circle cx="37" cy="24" r="4.6" fill="#FF5B1F"/></symbol>
+  <path id="wm" d="M60.63 34V14H65.45V18.71H65.57V34ZM74.67 34V21.37Q74.67 19.53 73.73 18.59Q72.78 17.65 70.98 17.65Q69.41 17.65 68.18 18.35Q66.94 19.06 66.25 20.31Q65.57 21.57 65.57 23.22L65.06 18.43Q66.08 16.24 68.04 14.92Q70 13.61 72.75 13.61Q76 13.61 77.82 15.45Q79.65 17.29 79.65 20.35V34ZM92.9 34.39Q89.73 34.39 87.35 33.06Q84.98 31.73 83.67 29.37Q82.35 27.02 82.35 23.96Q82.35 20.9 83.67 18.57Q84.98 16.24 87.33 14.92Q89.69 13.61 92.82 13.61Q95.8 13.61 98 14.84Q100.2 16.08 101.41 18.31Q102.63 20.55 102.63 23.53Q102.63 24.08 102.59 24.55Q102.55 25.02 102.47 25.49H85.41V22.04H98.67L97.65 22.98Q97.65 20.16 96.35 18.75Q95.06 17.33 92.75 17.33Q90.24 17.33 88.76 19.06Q87.29 20.78 87.29 24.04Q87.29 27.25 88.76 28.96Q90.24 30.67 92.94 30.67Q94.51 30.67 95.69 30.08Q96.86 29.49 97.41 28.27H102.08Q101.1 31.1 98.76 32.75Q96.43 34.39 92.9 34.39ZM105.61 34V5.76H110.55V34ZM124.2 34.39Q121.02 34.39 118.61 33.06Q116.2 31.73 114.86 29.35Q113.53 26.98 113.53 23.92Q113.53 20.86 114.86 18.55Q116.2 16.24 118.61 14.92Q121.02 13.61 124.2 13.61Q127.41 13.61 129.8 14.92Q132.2 16.24 133.53 18.55Q134.86 20.86 134.86 23.92Q134.86 26.98 133.51 29.35Q132.16 31.73 129.76 33.06Q127.37 34.39 124.2 34.39ZM124.2 30.43Q125.76 30.43 127.02 29.63Q128.27 28.82 128.98 27.35Q129.69 25.88 129.69 23.88Q129.69 20.94 128.14 19.25Q126.59 17.57 124.2 17.57Q121.8 17.57 120.24 19.25Q118.67 20.94 118.67 23.88Q118.67 25.88 119.39 27.35Q120.12 28.82 121.35 29.63Q122.59 30.43 124.2 30.43ZM137.8 34V14H142.63V18.71H142.75V34ZM151.25 34V21.1Q151.25 19.33 150.37 18.49Q149.49 17.65 147.88 17.65Q146.47 17.65 145.29 18.31Q144.12 18.98 143.43 20.2Q142.75 21.41 142.75 23.02L142.24 18.43Q143.25 16.24 145.18 14.92Q147.1 13.61 149.65 13.61Q152.71 13.61 154.47 15.35Q156.24 17.1 156.24 19.84V34ZM164.71 34V21.1Q164.71 19.33 163.84 18.49Q162.98 17.65 161.37 17.65Q159.92 17.65 158.75 18.31Q157.57 18.98 156.9 20.2Q156.24 21.41 156.24 23.02L155.37 18.43Q156.35 16.24 158.35 14.92Q160.35 13.61 162.98 13.61Q166.12 13.61 167.9 15.39Q169.69 17.18 169.69 20.12V34ZM180.47 34.39Q178.39 34.39 176.88 33.51Q175.37 32.63 174.57 31.1Q173.76 29.57 173.76 27.65V14H178.71V26.63Q178.71 28.47 179.63 29.41Q180.55 30.35 182.24 30.35Q183.76 30.35 184.92 29.65Q186.08 28.94 186.76 27.67Q187.45 26.39 187.45 24.78L187.96 29.57Q186.98 31.76 185.04 33.08Q183.1 34.39 180.47 34.39ZM187.61 34V29.29H187.45V14H192.43V34ZM210.71 34 204.55 25.06 196.24 14H201.84L207.41 22.12L216.31 34ZM204.94 21.96 210.55 14H216.04L207.33 25.41ZM206.9 25.65 200.86 34H195.41L204.55 22.16Z"/>
+</defs></svg>
+
+<nav class="nav" aria-label="Principal">
+  <div class="wrap">
+    <div class="bar">
+      <a class="home" href="#top" aria-label="Nelomux, inicio"><svg class="mark" viewBox="4 4 40 40" aria-hidden="true"><use href="#mk" width="48" height="48"/></svg><span class="wm" aria-hidden="true">NELO<b>MUX</b></span></a>
+      <ul>
+        <li><a href="#soluciones" data-en="Solutions">Soluciones</a></li>
+        <li><a href="#casos" data-en="Projects">Proyectos</a></li>
+        <li><a href="#marca" data-en="Why Nelomux">Por qué Nelomux</a></li>
+        <li><a href="#proceso" data-en="Process">Proceso</a></li>
+      </ul>
+      <a class="btn primary" href="#contacto" data-en="Book a call">Agenda una llamada</a>
+      <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Menú"><span></span><span></span></button>
+    </div>
+    <div class="menu" id="menu" hidden>
+      <a href="#soluciones" data-en="Solutions">Soluciones</a>
+      <a href="#casos" data-en="Projects">Proyectos</a>
+      <a href="#marca" data-en="Why Nelomux">Por qué Nelomux</a>
+      <a href="#proceso" data-en="Process">Proceso</a>
+      <a href="#contacto" class="btn primary" data-en="Book a call">Agenda una llamada</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="rise">
+      <div class="hero-wm" id="hwm" aria-hidden="true"><div class="in"><span style="--i:0">N</span><span style="--i:1">E</span><span style="--i:2">L</span><span style="--i:3">O</span><b><span style="--i:4">M</span><span style="--i:5">U</span><span style="--i:6">X</span></b></div></div>
+      <span class="kick" data-en="Custom systems and process automation">Sistemas a medida y automatización de procesos</span>
+      <h1 data-en="Systems and automation so your company <em>runs on its own.</em>">Sistemas y automatización para que tu empresa <em>trabaje sola.</em></h1>
+      <p class="lede" data-en="We connect sales, operations and finance in one system: leads that arrive by themselves, setters who book appointments, invoices that get collected, reports that get approved.">Conectamos ventas, operaciones y finanzas en un solo sistema: prospectos que llegan solos, setters que agendan citas, facturas que se cobran, reportes que se aprueban.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#contacto"><span data-en="Let's automate your operation">Automaticemos tu operación</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        <a class="btn ghost" href="#soluciones" data-en="See solutions">Ver soluciones</a>
+      </div>
+      <dl class="fields">
+        <div><dt data-en="SERVICE">SERVICIO</dt><dd data-en="Custom systems">Sistemas a medida</dd></div>
+        <div><dt data-en="HOW">MODALIDAD</dt><dd data-en="Demo before quote">Demo antes de cotizar</dd></div>
+        <div><dt data-en="LANGUAGES">IDIOMAS</dt><dd>ES · EN</dd></div>
+      </dl>
+    </div>
+    <div class="sym3d rise" id="sym" role="img" aria-label="Logo de Nelomux girando en 3D">
+      <div class="dots" aria-hidden="true"></div>
+      <div class="fallback"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="#mk" width="48" height="48"/></svg></div>
+    </div>
+  </div>
+</header>
+
+<div class="sectors">
+  <div class="wrap">
+    <span class="label" data-en="Industries we work with">Sectores donde trabajamos</span>
+    <ul>
+      <li data-en="Vehicle dealerships">Concesionarios de vehículos</li>
+      <li data-en="Industrial engineering">Ingeniería industrial</li>
+      <li data-en="Outdoor advertising">Publicidad exterior</li>
+      <li data-en="Trade associations">Gremios y asociaciones</li>
+      <li data-en="Services and retail">Servicios y comercio</li>
+    </ul>
+  </div>
+</div>
+
+<main>
+<section class="block" id="soluciones">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <span class="kick" data-en="Solutions">Soluciones</span>
+        <h2 data-en="Everything your team repeats every day, turned into a system.">Todo lo que tu equipo repite cada día, convertido en sistema.</h2>
+      </div>
+      <p data-en="Some are already running in client companies; others are ready as a demo so you can try them before deciding. Filter by area.">Algunas ya funcionan en empresas clientes; otras están listas como demo para que las pruebes antes de decidir. Filtra por área.</p>
+    </div>
+    <div class="filters rise" role="group" aria-label="Filtrar por área" id="filters">
+      <button type="button" data-f="all" aria-pressed="true"><span data-en="All">Todas</span><span class="c"></span></button>
+      <button type="button" data-f="ventas" aria-pressed="false"><span data-en="Sales">Ventas</span><span class="c"></span></button>
+      <button type="button" data-f="ops" aria-pressed="false"><span data-en="Operations">Operaciones</span><span class="c"></span></button>
+      <button type="button" data-f="fin" aria-pressed="false"><span data-en="Finance">Finanzas</span><span class="c"></span></button>
+      <button type="button" data-f="dir" aria-pressed="false"><span data-en="Management">Dirección</span><span class="c"></span></button>
+    </div>
+    <div class="legend rise"><span><span class="pill ok" data-en="In use">En uso</span><span data-en="running in a client company">funcionando en una empresa cliente</span></span><span><span class="pill" data-en="Demo">Demo</span><span data-en="ready to try, built to your needs">lista para probar, se adapta a tu empresa</span></span></div>
+    <div class="sols" id="sols">
+      <article id="sol-setters" class="sol card" data-a="ventas"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-5.5 6.5-5.5s6.5 1.9 6.5 5.5"/><path d="M17 7l2 2 3.5-3.5"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Setter system">Sistema de setters</h3><p data-en="Leads are split among setters automatically. They qualify, book the appointment on the calendar and hand it to the salesperson. You see contacts, bookings and show-ups per setter.">Los prospectos se reparten solos entre los setters. Ellos califican, agendan la cita en el calendario y la pasan al vendedor. Ves contactados, citas y asistencia por setter.</p><span class="area" data-en="Sales">Ventas</span></article>
+      <article id="sol-crm" class="sol card" data-a="ventas"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="CRM and sales funnel">CRM y embudo de ventas</h3><p data-en="Seven stages from new lead to won deal, with notes, history and the salesperson in charge. Nothing gets lost in a chat.">Siete etapas de prospecto nuevo a venta ganada, con notas, historial y vendedor a cargo. Nada se pierde en un chat.</p><span class="area" data-en="Sales">Ventas</span></article>
+      <article id="sol-bots" class="sol card" data-a="ventas"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Instagram and WhatsApp bots">Bots de Instagram y WhatsApp</h3><p data-en="Every conversation that shows interest becomes a lead in the CRM with its name, phone and the product it asked about.">Cada conversación con interés entra al CRM como prospecto, con nombre, teléfono y el producto que preguntó.</p><span class="area" data-en="Sales">Ventas</span></article>
+      <article class="sol card" data-a="ventas"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 15h3"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Public catalog that sells">Catálogo público que vende</h3><p data-en="Your products with photos and prices on the web. Each inquiry lands in the CRM on its own.">Tus productos con fotos y precios en la web. Cada consulta llega sola al CRM.</p><span class="area" data-en="Sales">Ventas</span></article>
+      <article id="sol-reporte" class="sol card" data-a="ops"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-3h5L16 6"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Daily field report">Reporte diario de campo</h3><p data-en="Progress, staff, equipment and photos from the phone, with a signed PDF at the end.">Avance, personal, equipos y fotos desde el teléfono, con un PDF firmado al final.</p><span class="area" data-en="Operations">Operaciones</span></article>
+      <article class="sol card" data-a="ops"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Approval chains">Cadenas de aprobación</h3><p data-en="Reports, documents and budgets go through the right levels in order. Whoever isn't authorized is blocked by the server.">Reportes, documentos y presupuestos pasan por los niveles correctos, en orden. El servidor bloquea a quien no tiene permiso.</p><span class="area" data-en="Operations">Operaciones</span></article>
+      <article class="sol card" data-a="ops"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Inventory, bookings and rotation">Inventario, reservas y rotación</h3><p data-en="Availability by date and automatic blocking, so the same asset is never committed twice.">Disponibilidad por fecha y bloqueo automático, para que un mismo activo nunca se comprometa dos veces.</p><span class="area" data-en="Operations">Operaciones</span></article>
+      <article class="sol card" data-a="ops"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14h3M13 14h3"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Appointments and reminders">Agenda de citas y recordatorios</h3><p data-en="Customers book a slot, get a WhatsApp reminder the day before and confirm with one tap.">Tus clientes reservan un horario, reciben un recordatorio por WhatsApp el día antes y confirman con un toque.</p><span class="area" data-en="Operations">Operaciones</span></article>
+      <article id="sol-fact" class="sol card" data-a="fin"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Invoicing and collections">Facturación y cobranza</h3><p data-en="Numbered invoices, automatic WhatsApp reminders before and after the due date, and payments reconciled against each invoice.">Facturas numeradas, recordatorios automáticos por WhatsApp antes y después del vencimiento, y pagos conciliados contra cada factura.</p><span class="area" data-en="Finance">Finanzas</span></article>
+      <article id="sol-nomina" class="sol card" data-a="fin"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v.01M18 15v.01"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Payroll and commissions">Nómina y comisiones</h3><p data-en="Commissions for salespeople and setters calculated from closed sales, with deductions and a pay slip for each person.">Comisiones de vendedores y setters calculadas desde las ventas cerradas, con deducciones y recibo para cada persona.</p><span class="area" data-en="Finance">Finanzas</span></article>
+      <article class="sol card" data-a="fin"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h2M14 15h2M8 18h2M14 18h2"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Quote builder">Cotizador automático</h3><p data-en="Quotes built from your real unit prices, with your branding and a validity date, ready to send in minutes.">Cotizaciones armadas con tus precios unitarios reales, con tu marca y vigencia, listas para enviar en minutos.</p><span class="area" data-en="Finance">Finanzas</span></article>
+      <article class="sol card" data-a="dir"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Management dashboards">Tableros de Dirección</h3><p data-en="Close rate, unassigned leads, pending reports and progress by project, fed by the same data your team enters.">Tasa de cierre, prospectos sin asignar, reportes pendientes y avance por proyecto, con los mismos datos que carga tu equipo.</p><span class="area" data-en="Management">Dirección</span></article>
+      <article class="sol card" data-a="dir"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><span class="pill" data-en="Demo">Demo</span></div><h3 data-en="Client portal">Portal de clientes</h3><p data-en="Your clients check their project status, documents and invoices without calling to ask.">Tus clientes consultan el estado de su proyecto, sus documentos y sus facturas sin llamar para preguntar.</p><span class="area" data-en="Management">Dirección</span></article>
+      <article class="sol card" data-a="dir"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M8 7h8M8 17h8"/><circle cx="5" cy="7" r="2.5"/><circle cx="19" cy="17" r="2.5"/><path d="M16 7c3 0 3 10 0 10M8 17c-3 0-3-10 0-10"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Integrations with your tools">Integraciones con tus herramientas</h3><p data-en="Google Drive, WhatsApp, Instagram and spreadsheets connected to the system, so nobody copies data from one place to another.">Google Drive, WhatsApp, Instagram y hojas de cálculo conectados al sistema, para que nadie copie datos de un lado a otro.</p><span class="area" data-en="Management">Dirección</span></article>
+      <article class="sol card" data-a="dir"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6"/><path d="M4 4v4.6h4.6M12 8v4l3 2"/></svg></div><span class="pill ok" data-en="In use">En uso</span></div><h3 data-en="Backups and traceability">Respaldos y trazabilidad</h3><p data-en="A full copy every night outside the system, and a record of who changed or approved each item.">Una copia completa cada noche fuera del sistema, y registro de quién cambió o aprobó cada dato.</p><span class="area" data-en="Management">Dirección</span></article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="casos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <span class="kick" data-en="Projects">Proyectos</span>
+        <h2 data-en="See each automation run, step by step.">Mira cada automatización correr, paso a paso.</h2>
+      </div>
+      <p data-en="Real projects, without client names out of respect for their privacy, plus demos you can try. Pick one; click a step to stop on it. Activity data are examples.">Proyectos reales, sin nombres de clientes por respeto a su privacidad, y demos que puedes probar. Elige uno; toca un paso para detenerte. Los datos de actividad son de ejemplo.</p>
+    </div>
+    <div class="cases rise">
+      <div class="tabs card" role="tablist" aria-label="Proyectos" id="tabs"></div>
+      <div class="case card" role="tabpanel" id="case" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="stats card rise">
+      <div class="stat"><em data-en="Engineering">Ingeniería</em><b data-count="553">553</b><span data-en="unit prices in a live catalog">precios unitarios en un catálogo vivo</span></div>
+      <div class="stat"><em data-en="Outdoor advertising">Publicidad exterior</em><b data-count="300" data-pre="+">+300</b><span data-en="billboards tracked by location and rotation">vallas controladas por ubicación y rotación</span></div>
+      <div class="stat"><em data-en="Trade association">Gremio</em><b data-count="20" data-pre="+">+20</b><span data-en="companies in one national catalog">empresas en un solo catálogo nacional</span></div>
+      <div class="stat"><em data-en="Dealership">Concesionario</em><b data-count="7">7</b><span data-en="funnel stages, from new lead to won">etapas del embudo, de prospecto a venta</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block dark" id="marca">
+  <div class="wrap brand">
+    <div class="copy rise">
+      <span class="kick" data-en="Why Nelomux">Por qué Nelomux</span>
+      <h2 data-en="The name already says what we do.">El nombre ya dice lo que hacemos.</h2>
+      <p data-en="A <b>mux</b>, or multiplexer, is the component that takes many signals and carries them through a single channel. We do the same with your company: sales, field, finance and inventory come in separately and leave as one source of truth for Management.">Un <b>mux</b>, o multiplexor, es el componente que toma muchas señales y las lleva por un solo canal. Eso hacemos con tu empresa: ventas, campo, finanzas e inventario entran por separado y salen como una sola fuente de verdad para Dirección.</p>
+      <div class="values">
+        <div class="value"><svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 2h3c4 0 4 5 8 5M2 7h11M2 12h3c4 0 4-5 8-5M13 7h3" fill="none" stroke="#ff9468" stroke-width="1.6" stroke-linecap="round"/><circle cx="18.5" cy="7" r="2.2" fill="#ff5b1f"/></svg><div><b data-en="We speak your language">Hablamos tu idioma</b><span data-en="Lead, setter, invoice, work item. No software jargon.">Prospecto, setter, factura, partida. Sin jerga de software.</span></div></div>
+        <div class="value"><svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 2h3c4 0 4 5 8 5M2 7h11M2 12h3c4 0 4-5 8-5M13 7h3" fill="none" stroke="#ff9468" stroke-width="1.6" stroke-linecap="round"/><circle cx="18.5" cy="7" r="2.2" fill="#ff5b1f"/></svg><div><b data-en="Concrete numbers">Cifras concretas</b><span data-en="Fixed price per phase and dates you can hold us to.">Precio cerrado por fase y fechas que puedes exigir.</span></div></div>
+        <div class="value"><svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 2h3c4 0 4 5 8 5M2 7h11M2 12h3c4 0 4-5 8-5M13 7h3" fill="none" stroke="#ff9468" stroke-width="1.6" stroke-linecap="round"/><circle cx="18.5" cy="7" r="2.2" fill="#ff5b1f"/></svg><div><b data-en="A demo before a promise">Demo antes que promesa</b><span data-en="You see it working before you sign.">Lo ves funcionando antes de firmar.</span></div></div>
+      </div>
+    </div>
+    <div class="muxbox rise">
+      <svg class="mux" id="mux" focusable="false" viewBox="-70 0 960 380" role="group" aria-label="Diagrama: cuatro áreas entran a Nelomux y salen como una sola señal hacia Dirección"><g class="in" data-k="ventas" tabindex="0" role="button" aria-label="Ventas"><rect class="hit" x="-70" y="40" width="630" height="60"/><path id="w-ventas" class="wire" d="M150 70H250C390 70 400 190 540 190"/><circle class="dot" cx="150" cy="70" r="7"/><text class="lbl" x="130" y="77" text-anchor="end" data-en="Sales">Ventas</text><circle class="pulse" r="3.5"><animateMotion dur="3.2s" begin="0.0s" repeatCount="indefinite"><mpath href="#w-ventas"/></animateMotion></circle></g><g class="in" data-k="campo" tabindex="0" role="button" aria-label="Campo"><rect class="hit" x="-70" y="120" width="630" height="60"/><path id="w-campo" class="wire" d="M150 150H250C390 150 400 190 540 190"/><circle class="dot" cx="150" cy="150" r="7"/><text class="lbl" x="130" y="157" text-anchor="end" data-en="Field">Campo</text><circle class="pulse" r="3.5"><animateMotion dur="3.2s" begin="0.8s" repeatCount="indefinite"><mpath href="#w-campo"/></animateMotion></circle></g><g class="in" data-k="fin" tabindex="0" role="button" aria-label="Finanzas"><rect class="hit" x="-70" y="200" width="630" height="60"/><path id="w-fin" class="wire" d="M150 230H250C390 230 400 190 540 190"/><circle class="dot" cx="150" cy="230" r="7"/><text class="lbl" x="130" y="237" text-anchor="end" data-en="Finance">Finanzas</text><circle class="pulse" r="3.5"><animateMotion dur="3.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#w-fin"/></animateMotion></circle></g><g class="in" data-k="inv" tabindex="0" role="button" aria-label="Inventario"><rect class="hit" x="-70" y="280" width="630" height="60"/><path id="w-inv" class="wire" d="M150 310H250C390 310 400 190 540 190"/><circle class="dot" cx="150" cy="310" r="7"/><text class="lbl" x="130" y="317" text-anchor="end" data-en="Inventory">Inventario</text><circle class="pulse" r="3.5"><animateMotion dur="3.2s" begin="2.4000000000000004s" repeatCount="indefinite"><mpath href="#w-inv"/></animateMotion></circle></g>
+<path id="w-out" class="outwire" d="M620 190H760"/><circle class="pulse" r="4.5"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#w-out"/></animateMotion></circle>
+<rect x="540" y="150" width="80" height="80" rx="20" fill="#14161B" stroke="rgba(255,255,255,.2)"/><use href="#mk" x="556" y="166" width="48" height="48"/>
+<text class="sub" x="580" y="262" text-anchor="middle">nelomux</text>
+<circle cx="776" cy="190" r="14" fill="#ff5b1f"/><text class="outlbl" x="776" y="238" text-anchor="middle" data-en="Management">Dirección</text><text class="sub" x="776" y="264" text-anchor="middle" data-en="one source of truth">una sola verdad</text></svg>
+      <div class="muxchips" role="group" aria-label="Áreas"><button type="button" data-k="ventas" data-en="Sales">Ventas</button><button type="button" data-k="campo" data-en="Field">Campo</button><button type="button" data-k="fin" data-en="Finance">Finanzas</button><button type="button" data-k="inv" data-en="Inventory">Inventario</button></div>
+      <div class="muxcap" aria-live="polite"><b id="mux-k">Dirección</b><span id="mux-t">Una sola fuente de verdad: ventas, avance, cobros y costos en una pantalla.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="proceso">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <span class="kick" data-en="How we work">Cómo trabajamos</span>
+        <h2 data-en="You see your system working before you pay for it.">Ves tu sistema funcionando antes de pagarlo.</h2>
+      </div>
+      <p data-en="Four stages, each with a clear deliverable. You always know what's being built, what it costs and when you'll get it.">Cuatro etapas, cada una con un entregable claro. Siempre sabes qué se está construyendo, cuánto cuesta y cuándo lo recibes.</p>
+    </div>
+    <ol class="steps" id="steps">
+      <li class="step card rise"><span class="bar"></span><span class="n">01</span><h3 data-en="Discovery">Descubrimiento</h3><p data-en="We interview each department and map how information really flows: who fills what, who approves, where it gets stuck.">Entrevistamos a cada área y trazamos cómo circula de verdad la información: quién llena qué, quién aprueba, dónde se traba.</p><span class="meta" data-en="Deliverable · process map">Entregable · mapa de flujos</span></li>
+      <li class="step card rise"><span class="bar"></span><span class="n">02</span><h3 data-en="Working demo">Demo funcional</h3><p data-en="Before quoting, you get a live demo with your processes and sample data. You decide with something in your hands.">Antes de cotizar, recibes una demo en vivo con tus procesos y datos de ejemplo. Decides con algo en la mano.</p><span class="meta" data-en="Deliverable · live link">Entregable · enlace en vivo</span></li>
+      <li class="step card rise"><span class="bar"></span><span class="n">03</span><h3 data-en="Build in phases">Construcción por fases</h3><p data-en="Fixed price per phase and deliveries your team can test. Nothing moves on until the previous phase works.">Precio cerrado por fase y entregas que tu equipo puede probar. Nada avanza hasta que la fase anterior funciona.</p><span class="meta" data-en="Deliverable · contract and schedule">Entregable · contrato y cronograma</span></li>
+      <li class="step card rise"><span class="bar"></span><span class="n">04</span><h3 data-en="Launch and support">Puesta en marcha y soporte</h3><p data-en="Training by role, hosting and monthly support. If you need it, we move the system to your own server.">Capacitación por rol, hospedaje y soporte mensual. Si lo necesitas, llevamos el sistema a tu propio servidor.</p><span class="meta" data-en="Deliverable · system in production">Entregable · sistema en producción</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div>
+        <span class="kick" data-en="Non-negotiables">Lo que no negociamos</span>
+        <h2 data-en="Your data and your clients' data, protected.">Tus datos y los de tus clientes, protegidos.</h2>
+      </div>
+    </div>
+    <div class="tenets">
+      <div class="tenet rise"><h3 data-en="Privacy first">Privacidad primero</h3><p data-en="We never publish who our clients are or what their numbers are. What you tell us stays with us.">Nunca publicamos quiénes son nuestros clientes ni sus cifras. Lo que nos cuentas se queda con nosotros.</p></div>
+      <div class="tenet rise"><h3 data-en="Your data is yours">Tus datos son tuyos</h3><p data-en="The system can run on our cloud or on your own server. Your information can always leave with you.">El sistema puede vivir en nuestra nube o en tu propio servidor. Tu información siempre puede salir contigo.</p></div>
+      <div class="tenet rise"><h3 data-en="Permissions by role">Permisos por rol</h3><p data-en="Each person sees and edits only what their job needs, enforced on the server and not only on screen.">Cada persona ve y edita solo lo que su cargo necesita, controlado en el servidor y no solo en la pantalla.</p></div>
+      <div class="tenet rise"><h3 data-en="Nightly backups">Respaldos cada noche</h3><p data-en="A full copy of your information every night, stored outside the system.">Una copia completa de tu información cada noche, guardada fuera del sistema.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact dark" id="contacto">
+  <div class="wrap grid rise">
+    <div>
+      <span class="kick" data-en="Contact">Contacto</span>
+      <h2 data-en="What does your team still do by hand?">¿Qué sigue haciendo tu equipo a mano?</h2>
+      <p data-en="Tell us in a call. We'll tell you which process to automate first, what it takes and how soon you'll see a demo.">Cuéntanoslo en una llamada. Te decimos qué proceso conviene automatizar primero, qué hace falta y en cuánto tiempo ves una demo.</p>
+    </div>
+    <div class="chan">
+      <div class="row"><div><span class="label">WhatsApp</span><span class="v" id="wa">+1 437 255 6554</span></div><a class="go" href="https://wa.me/14372556554" target="_blank" rel="noopener" data-en="Write">Escribir</a><button type="button" data-copy="wa" data-en="Copy">Copiar</button></div>
+      <div class="row"><div><span class="label">Email</span><span class="v" id="em">info@nelomux.com</span></div><button type="button" data-copy="em" data-en="Copy">Copiar</button></div>
+      <div class="row"><div><span class="label" data-en="Founder">Fundador</span><span class="v" style="font-family:var(--font-sans);font-weight:600">Jose Rafael Campos</span></div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot">
+      <div class="brandcol"><a class="wmlink" href="#top" aria-label="Nelomux, volver arriba"><span class="wm big">NELO<b>MUX</b></span></a><p class="tag" data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</p><a class="btn primary foot-cta" href="#contacto" data-en="Book a call">Agenda una llamada</a></div>
+      <nav aria-label="Explora"><h3 data-en="Explore">Explora</h3><ul><li><a class="fl" href="#soluciones" data-spy="soluciones"><span data-en="Solutions">Soluciones</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li><li><a class="fl" href="#casos" data-spy="casos"><span data-en="Projects">Proyectos</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li><li><a class="fl" href="#marca" data-spy="marca"><span data-en="Why Nelomux">Por qué Nelomux</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li><li><a class="fl" href="#proceso" data-spy="proceso"><span data-en="Process">Proceso</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li><li><a class="fl" href="#contacto" data-spy="contacto"><span data-en="Contact">Contacto</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li></ul></nav>
+      <div><h3 data-en="Solutions">Soluciones</h3><ul><li><button type="button" class="fl" data-sol="sol-setters" data-filter="ventas"><span data-en="Setter system">Sistema de setters</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-sol="sol-crm" data-filter="ventas"><span data-en="CRM and funnel">CRM y embudo</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-sol="sol-bots" data-filter="ventas"><span data-en="Instagram and WhatsApp bots">Bots de Instagram y WhatsApp</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-sol="sol-fact" data-filter="fin"><span data-en="Invoicing and collections">Facturación y cobranza</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-sol="sol-nomina" data-filter="fin"><span data-en="Payroll and commissions">Nómina y comisiones</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-sol="sol-reporte" data-filter="ops"><span data-en="Field reports">Reportes de campo</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li></ul></div>
+      <div><h3 data-en="Projects">Proyectos</h3><ul><li><button type="button" class="fl" data-case="0"><span data-en="CRM with setters">CRM con setters</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-case="1"><span data-en="Admin system">Sistema administrativo</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-case="2"><span data-en="Billboard inventory">Inventario de vallas</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-case="3"><span data-en="Multi-company marketplace">Marketplace multiempresa</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-case="4"><span data-en="Automatic invoicing">Facturación automática</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li><li><button type="button" class="fl" data-case="5"><span data-en="Payroll and commissions">Nómina y comisiones</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></li></ul></div>
+      <div><h3 data-en="Contact">Contacto</h3><ul>
+        <li><a class="fl" href="https://wa.me/14372556554" target="_blank" rel="noopener"><span>WhatsApp +1 437 255 6554</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li>
+        <li><button type="button" class="fl" data-copytext="info@nelomux.com"><span class="t">info@nelomux.com</span><span class="hint" data-en="copy">copiar</span></button></li>
+        <li><button type="button" class="fl" data-copytext="+1 437 255 6554"><span class="t" data-en="Copy phone">Copiar teléfono</span><span class="hint" data-en="copy">copiar</span></button></li>
+        <li><a class="fl" href="#contacto"><span data-en="Jose Rafael Campos · Founder">Jose Rafael Campos · Fundador</span><svg class="ar" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></li>
+      </ul></div>
+    </div>
+    <div class="legal"><span><b>Nelomux</b> · <span data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</span></span><span>info@nelomux.com · +1 437 255 6554 · © 2026</span></div>
+  </div>
+</footer>
+<a class="wa-float" id="wa-float" href="https://wa.me/14372556554" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z" fill="#ff5b1f"/><path d="M8.6 7.6c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.6.7c-.1.1-.2.3 0 .5.5.9 1.4 1.9 2.6 2.5.2.1.4.1.5 0l.8-.9c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.4 0 .6-.3 1.4-.9 1.7-.6.4-1.5.5-2.6.1-1.9-.7-3.6-2.2-4.6-4-.6-1.1-.6-2.2-.2-2.9z" fill="#14161b"/></svg><span data-en="Chat on WhatsApp">Escríbenos</span></a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+document.documentElement.classList.add('js');
+var LANG='es';
+var REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Proyectos ---------- */
+var CASES=[
+ {id:'crm',kind:'use',
+  sector:{es:'Concesionario de vehículos',en:'Vehicle dealership'},
+  title:{es:'CRM con setters: del mensaje en Instagram a la venta cerrada',en:'CRM with setters: from an Instagram message to a closed sale'},
+  sum:{es:'Cada mensaje de Instagram, WhatsApp o del catálogo web entra solo como prospecto. Un equipo de setters lo califica y agenda la cita, el vendedor de piso la atiende y la venta avanza por 7 etapas. Inventario con fotos y tasa de cierre en vivo.',en:'Every message from Instagram, WhatsApp or the web catalog lands as a lead on its own. A setter team qualifies it and books the appointment, the floor salesperson takes it and the sale moves through 7 stages. Inventory with photos and a live close rate.'},
+  steps:{es:['Llega un mensaje','El bot crea el prospecto','Se reparte a un setter','El setter agenda la cita','El vendedor negocia','Venta ganada'],en:['A message arrives','The bot creates the lead','Routed to a setter','Setter books the appointment','Salesperson negotiates','Deal won']},
+  feed:{es:['Mensaje en Instagram: “¿Sigue disponible la camioneta?”','Prospecto creado solo · fuente: bot','Asignado al setter con menos carga','Cita agendada · jueves 10:00','Vehículo pasa a “En negociación”','Venta ganada · vehículo marcado “Vendido”'],en:['Instagram message: “Is the pickup still available?”','Lead created automatically · source: bot','Assigned to the setter with the lightest load','Appointment booked · Thursday 10:00','Vehicle moves to “In negotiation”','Deal won · vehicle marked “Sold”']},
+  built:{es:['Equipo por roles: dirección comercial, setters y vendedores de piso','Tablero y calendario de prospectos','Conexión con bots de Instagram y WhatsApp','Catálogo público que convierte visitas en prospectos','Inventario de carros, camiones y motos con fotos','App que se instala en el teléfono'],en:['Team by role: sales management, setters and floor salespeople','Lead board and calendar','Instagram and WhatsApp bot connection','Public catalog that turns visits into leads','Cars, trucks and motorcycles inventory with photos','App that installs on the phone']},
+  kpi:{n:'7',es:'etapas del embudo comercial',en:'sales-funnel stages'}},
+ {id:'ing',kind:'use',
+  sector:{es:'Empresa de ingeniería industrial',en:'Industrial engineering company'},
+  title:{es:'Sistema administrativo integral y reporte diario de obra',en:'Integrated admin system and daily site report'},
+  sum:{es:'Un solo sistema para todas las gerencias: clientes, plantas, proyectos y partidas, un catálogo de precios unitarios y un reporte diario de campo que pasa por dos niveles de aprobación antes de llegar a Dirección.',en:'One system for every department: clients, plants, projects and work items, a unit-price catalog and a daily field report that goes through two approval levels before reaching Management.'},
+  steps:{es:['El supervisor reporta en campo','Carga fotos, personal y equipos','Contratos revisa (nivel 1)','Ing. Residente aprueba (nivel 2)','Sale el PDF con 4 firmas','Dirección lo ve el mismo día'],en:['Supervisor reports on site','Adds photos, staff and equipment','Contracts reviews (level 1)','Resident engineer approves (level 2)','4-signature PDF is generated','Management sees it same day']},
+  feed:{es:['Reporte diario enviado · mantenimiento de planta','12 fotos · 8 personas · 3 equipos','Nivel 1 aprobado · Administración de Contratos','Nivel 2 aprobado · Ingeniero Residente','PDF generado con 4 firmas','Avance de la partida actualizado en el tablero'],en:['Daily report sent · plant maintenance','12 photos · 8 people · 3 machines','Level 1 approved · Contracts administration','Level 2 approved · Resident engineer','PDF generated with 4 signatures','Work-item progress updated on the dashboard']},
+  built:{es:['Jerarquía cliente → planta → unidad → proyecto → partida','Catálogo de 553 precios unitarios con aprobación','Responsables asignados por partida','Aprobación en 2 niveles protegida en el servidor','Permisos por rol según el organigrama','Respaldo automático cada noche'],en:['Client → plant → unit → project → work-item hierarchy','553 unit-price catalog with approval','Owners assigned per work item','2-level approval enforced on the server','Role permissions mapped to the org chart','Automatic nightly backup']},
+  kpi:{n:'553',es:'precios unitarios en un catálogo vivo',en:'unit prices in a live catalog'}},
+ {id:'vallas',kind:'demo',
+  sector:{es:'Empresa de publicidad exterior',en:'Outdoor advertising company'},
+  title:{es:'Inventario de vallas con lonas rotativas',en:'Billboard inventory with rotating vinyls'},
+  sum:{es:'Cada lona cambia de ubicación dentro de un circuito según su contrato. El sistema sabe siempre dónde está, a qué contrato pertenece y cuándo le toca moverse.',en:'Each vinyl moves between locations in a circuit according to its contract. The system always knows where it is, which contract it belongs to and when it moves next.'},
+  steps:{es:['Se firma el contrato','Lonas asignadas a un circuito','Rotación programada','Aviso de próxima rotación','Ubicación al día'],en:['Contract is signed','Vinyls assigned to a circuit','Rotation scheduled','Next-rotation notice','Location up to date']},
+  feed:{es:['Contrato nuevo · circuito Este · 6 meses','4 lonas asignadas al circuito','Rotación programada cada 30 días','Aviso: rotación en 3 días · valla 118','Lona en su nueva ubicación · contrato intacto'],en:['New contract · East circuit · 6 months','4 vinyls assigned to the circuit','Rotation scheduled every 30 days','Notice: rotation in 3 days · billboard 118','Vinyl at its new location · contract intact']},
+  built:{es:['Registro de más de 300 vallas','Circuitos rotativos por contrato','Vista de ubicación actual y próxima rotación','Trazabilidad del contrato en cada movimiento'],en:['Registry of 300+ billboards','Rotating circuits per contract','Current location and next rotation view','Contract traceability on every move']},
+  kpi:{n:'+300',es:'vallas controladas',en:'billboards tracked'}},
+ {id:'market',kind:'demo',
+  sector:{es:'Gremio de publicidad exterior',en:'Outdoor advertising guild'},
+  title:{es:'Marketplace nacional multiempresa',en:'National multi-company marketplace'},
+  sum:{es:'Un catálogo nacional con las vallas de más de 20 empresas, disponibilidad por periodo y reservas que bloquean la valla para que nunca se venda dos veces.',en:'A national catalog with billboards from more than 20 companies, availability by period and bookings that lock the billboard so it is never sold twice.'},
+  steps:{es:['El anunciante busca por ciudad','Ve disponibilidad por periodo','Revisa la normativa local','Reserva en línea','La valla queda bloqueada'],en:['Advertiser searches by city','Sees availability by period','Checks local regulations','Books online','Billboard is locked']},
+  feed:{es:['Búsqueda: vallas en la capital · marzo a mayo','23 vallas disponibles en 5 empresas','Normativa municipal aplicable mostrada','Reserva enviada · 3 meses','Valla bloqueada para las demás empresas'],en:['Search: billboards in the capital · March to May','23 available billboards across 5 companies','Applicable city regulations shown','Booking sent · 3 months','Billboard locked for the other companies']},
+  built:{es:['Catálogo navegable de más de 20 empresas','Calendario de disponibilidad mensual o anual','Marco regulatorio por municipio','Flujo de reserva de punta a punta'],en:['Browsable catalog across 20+ companies','Monthly or yearly availability calendar','Regulatory framework by city','End-to-end booking flow']},
+  kpi:{n:'+20',es:'empresas en un solo catálogo',en:'companies in one catalog'}},
+ {id:'fact',kind:'demo',
+  sector:{es:'Para cualquier empresa',en:'For any company'},
+  title:{es:'Facturación y cobranza que se cobra sola',en:'Invoicing and collections that collect themselves'},
+  sum:{es:'La factura sale con tu marca y numeración, el cliente la recibe por WhatsApp y correo, los recordatorios salen solos y cada pago se concilia contra su factura. Dirección ve cuánto entra y cuánto falta.',en:'The invoice goes out with your branding and numbering, the client gets it by WhatsApp and email, reminders go out on their own and each payment is matched to its invoice. Management sees what comes in and what is pending.'},
+  steps:{es:['Se emite la factura','Llega por WhatsApp y correo','Recordatorio 3 días antes','El cliente paga','Pago conciliado','Flujo de caja al día'],en:['Invoice is issued','Arrives by WhatsApp and email','Reminder 3 days before','Client pays','Payment reconciled','Cash flow up to date']},
+  feed:{es:['Factura NLX-2026-001 emitida · US$ 3.260,00','Enviada por WhatsApp · leída 09:40','Recordatorio automático · vence en 3 días','Transferencia recibida · US$ 3.260,00','Pago conciliado · factura marcada “Pagada”','Cuentas por cobrar actualizadas'],en:['Invoice NLX-2026-001 issued · US$ 3,260.00','Sent by WhatsApp · read 09:40','Automatic reminder · due in 3 days','Transfer received · US$ 3,260.00','Payment reconciled · invoice marked “Paid”','Receivables updated']},
+  built:{es:['Numeración por tipo de documento','Plantilla con tu marca','Envío y recordatorios por WhatsApp','Estado de cuenta por cliente','Reporte de cuentas por cobrar'],en:['Numbering by document type','Template with your branding','WhatsApp delivery and reminders','Statement per client','Receivables report']},
+  kpi:{n:'0',es:'facturas perseguidas a mano',en:'invoices chased by hand'}},
+ {id:'nomina',kind:'demo',
+  sector:{es:'Equipos de venta',en:'Sales teams'},
+  title:{es:'Nómina y comisiones de vendedores y setters',en:'Payroll and commissions for salespeople and setters'},
+  sum:{es:'Las comisiones se calculan con las ventas cerradas y las citas que cada setter generó. Se aplican deducciones, Dirección aprueba y cada persona recibe su recibo.',en:'Commissions are calculated from closed sales and the appointments each setter produced. Deductions are applied, Management approves and each person gets a pay slip.'},
+  steps:{es:['Cierre del mes','Ventas y citas por persona','Cálculo de comisiones','Deducciones aplicadas','Dirección aprueba','Recibo para cada persona'],en:['Month closes','Sales and appointments per person','Commissions calculated','Deductions applied','Management approves','Pay slip for each person']},
+  feed:{es:['Cierre de septiembre iniciado','14 ventas · 61 citas asignadas a 9 personas','Comisiones calculadas por regla de cada rol','Anticipos y deducciones descontados','Nómina aprobada por Dirección','9 recibos enviados'],en:['September close started','14 sales · 61 appointments across 9 people','Commissions calculated by each role\'s rule','Advances and deductions applied','Payroll approved by Management','9 pay slips sent']},
+  built:{es:['Reglas de comisión por rol','Conexión directa con el CRM','Aprobación de Dirección','Recibo individual','Histórico por persona'],en:['Commission rules per role','Direct link to the CRM','Management approval','Individual pay slip','History per person']},
+  kpi:{n:'1',es:'clic para cerrar la nómina del mes',en:'click to close the month\'s payroll'}}
+];
+var KIND={use:{es:'En uso',en:'In use',cls:'ok'},demo:{es:'Demo',en:'Demo',cls:''}};
+var cur=0,stepI=0,timer=null,paused=false,hover=false;
+var tabsEl=document.getElementById('tabs'),caseEl=document.getElementById('case');
+var check='<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
+function times(n){var o=[],m=9*60+14;for(var i=0;i<n;i++){o.push(String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'));m+=[1,6,23,47,90,15][i%6]}return o}
+function renderTabs(){
+  tabsEl.innerHTML=CASES.map(function(c,i){return '<button type="button" class="tab" role="tab" id="tab-'+c.id+'" aria-controls="case" tabindex="'+(i===cur?0:-1)+'" aria-selected="'+(i===cur)+'" data-i="'+i+'"><i>NLX · '+String(i+1).padStart(2,'0')+'<em>'+KIND[c.kind][LANG]+'</em></i><b>'+c.title[LANG].split(':')[0]+'</b><span class="label" style="letter-spacing:.06em;text-transform:none;font-family:var(--font-sans);font-size:13px">'+c.sector[LANG]+'</span></button>'}).join('');
+}
+function renderCase(){
+  var c=CASES[cur],L=LANG,st=c.steps[L],fd=c.feed[L],tm=times(fd.length),k=KIND[c.kind];
+  caseEl.setAttribute('aria-labelledby','tab-'+c.id);
+  caseEl.innerHTML=
+   '<div class="case-top"><div><span class="kick">'+c.sector[L]+'</span><h3>'+c.title[L]+'</h3></div><span class="pill '+k.cls+'">'+k[L]+'</span></div>'+
+   '<p class="sum">'+c.sum[L]+'</p>'+
+   '<div class="flow" id="flow">'+st.map(function(s,i){return '<button type="button" class="fstep" data-s="'+i+'"><span class="node"><span class="n">'+String(i+1).padStart(2,'0')+'</span></span><span class="t">'+s+'</span></button>'}).join('')+'</div>'+
+   '<div class="case-grid">'+
+     '<div class="feed"><div class="feed-h"><span class="label">'+(L==='en'?'Activity · example':'Actividad · ejemplo')+'</span><span class="live">'+(L==='en'?'Live':'En vivo')+'</span></div>'+
+       fd.map(function(f,i){return '<div class="ev"><time>'+tm[i]+'</time><span>'+f+'</span></div>'}).join('')+'</div>'+
+     '<div class="built"><span class="label">'+(c.kind==='use'?(L==='en'?'What we built':'Lo que construimos'):(L==='en'?'What the demo includes':'Qué incluye la demo'))+'</span><ul>'+c.built[L].map(function(b){return '<li>'+check+'<span>'+b+'</span></li>'}).join('')+'</ul>'+
+       '<div class="kpi"><b>'+c.kpi.n+'</b><span>'+c.kpi[L]+'</span></div>'+
+       '<div class="case-ctrl"><button type="button" id="pp" aria-label="'+(paused?(L==='en'?'Play':'Reproducir'):(L==='en'?'Pause':'Pausar'))+'">'+(paused?'<svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z"/></svg>':'<svg viewBox="0 0 16 16"><path d="M3 2h3.5v12H3zM9.5 2H13v12H9.5z"/></svg>')+'</button><span>'+(paused?(L==='en'?'Paused':'En pausa'):(L==='en'?'Playing':'Reproduciendo'))+'</span></div>'+
+     '</div>'+
+   '</div>';
+  paint();
+}
+function paint(){
+  caseEl.querySelectorAll('.fstep').forEach(function(b,i){b.classList.toggle('on',i===stepI);b.classList.toggle('done',i<stepI)});
+  caseEl.querySelectorAll('.ev').forEach(function(e,i){e.classList.toggle('pending',i>stepI);e.classList.toggle('now',i===stepI)});
+  var on=caseEl.querySelector('.fstep.on'),fl=document.getElementById('flow');
+  if(on&&fl&&fl.scrollWidth>fl.clientWidth+2)fl.scrollTo({left:on.offsetLeft-fl.clientWidth/2+on.offsetWidth/2,behavior:'smooth'});
+}
+function tick(){var n=CASES[cur].steps.es.length;if(stepI<n-1){stepI++;paint()}else{stepI=0;cur=(cur+1)%CASES.length;renderTabs();renderCase()}}
+function play(){clearInterval(timer);if(!paused&&!hover&&!REDUCE)timer=setInterval(tick,1900)}
+tabsEl.addEventListener('click',function(e){var b=e.target.closest('.tab');if(!b)return;cur=+b.dataset.i;stepI=0;renderTabs();renderCase();play()});
+tabsEl.addEventListener('keydown',function(e){if(['ArrowRight','ArrowLeft','ArrowDown','ArrowUp'].indexOf(e.key)<0)return;e.preventDefault();cur=(cur+(e.key==='ArrowRight'||e.key==='ArrowDown'?1:CASES.length-1))%CASES.length;stepI=0;renderTabs();renderCase();document.getElementById('tab-'+CASES[cur].id).focus();play()});
+caseEl.addEventListener('click',function(e){var s=e.target.closest('.fstep');if(s){stepI=+s.dataset.s;paused=true;clearInterval(timer);renderCase();return}if(e.target.closest('#pp')){paused=!paused;renderCase();play()}});
+caseEl.addEventListener('pointerenter',function(e){if(e.pointerType==='mouse'){hover=true;clearInterval(timer)}});
+caseEl.addEventListener('pointerleave',function(){if(hover){hover=false;play()}});
+renderTabs();renderCase();
+if('IntersectionObserver' in window)new IntersectionObserver(function(es){if(es[0].isIntersecting)play();else clearInterval(timer)},{threshold:.25}).observe(caseEl);else play();
+
+/* ---------- Filtros de soluciones ---------- */
+(function(){
+  var fs=[].slice.call(document.querySelectorAll('#filters button')),ss=[].slice.call(document.querySelectorAll('#sols .sol'));
+  fs.forEach(function(b){b.querySelector('.c').textContent=b.dataset.f==='all'?ss.length:ss.filter(function(s){return s.dataset.a===b.dataset.f}).length;
+    b.addEventListener('click',function(){var f=b.dataset.f;fs.forEach(function(x){x.setAttribute('aria-pressed',x===b)});ss.forEach(function(s){s.hidden=!(f==='all'||s.dataset.a===f)})})});
+})();
+
+/* ---------- Menú móvil ---------- */
+(function(){
+  var b=document.getElementById('menu-btn'),m=document.getElementById('menu');
+  function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o)}
+  b.addEventListener('click',function(){set(m.hidden)});
+  m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
+  addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden){set(false);b.focus()}});
+  addEventListener('resize',function(){if(innerWidth>1060)set(false)});
+})();
+
+/* ---------- Mux ---------- */
+(function(){
+  var mux=document.getElementById('mux'),K=document.getElementById('mux-k'),T=document.getElementById('mux-t');
+  var D={ventas:{es:['Ventas','Prospectos de Instagram, WhatsApp y la web, repartidos a setters y vendedores.'],en:['Sales','Leads from Instagram, WhatsApp and the web, routed to setters and salespeople.']},
+         campo:{es:['Campo','Reportes diarios con fotos, personal y equipos, aprobados por nivel.'],en:['Field','Daily reports with photos, staff and equipment, approved level by level.']},
+         fin:{es:['Finanzas','Facturas, cobros, nómina y comisiones que salen de los mismos datos.'],en:['Finance','Invoices, collections, payroll and commissions from the same data.']},
+         inv:{es:['Inventario','Vehículos, vallas o materiales: dónde está cada uno y si está disponible.'],en:['Inventory','Vehicles, billboards or materials: where each one is and whether it is available.']},
+         out:{es:['Dirección','Una sola fuente de verdad: ventas, avance, cobros y costos en una pantalla.'],en:['Management','One source of truth: sales, progress, collections and costs on one screen.']}};
+  var curK='out',ins=[].slice.call(mux.querySelectorAll('.in')),chips=[].slice.call(document.querySelectorAll('.muxchips button'));
+  function show(k){curK=k;var d=D[k][LANG];K.textContent=d[0];T.textContent=d[1];ins.forEach(function(g){g.classList.toggle('on',g.dataset.k===k)});chips.forEach(function(c){c.setAttribute('aria-pressed',c.dataset.k===k)});mux.classList.toggle('focus',k!=='out')}
+  chips.forEach(function(c){c.addEventListener('click',function(){show(curK===c.dataset.k?'out':c.dataset.k)})});
+  ins.forEach(function(g){['pointerenter','focus','click'].forEach(function(ev){g.addEventListener(ev,function(){show(g.dataset.k)})});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show(g.dataset.k)}})});
+  mux.addEventListener('pointerleave',function(){show('out')});
+  mux.addEventListener('focusout',function(e){if(!mux.contains(e.relatedTarget))show('out')});
+  window.__muxLang=function(){show(curK)};
+  if(REDUCE)mux.querySelectorAll('animateMotion').forEach(function(a){a.parentNode.remove()});
+})();
+
+/* ---------- WhatsApp flotante ---------- */
+(function(){
+  var f=document.getElementById('wa-float'),c=document.getElementById('contacto'),inC=false;
+  function upd(){f.classList.toggle('hide',inC||scrollY<420)}
+  addEventListener('scroll',upd,{passive:true});upd();
+  if('IntersectionObserver' in window)new IntersectionObserver(function(es){inC=es[0].isIntersecting;upd()},{threshold:.2}).observe(c);
+})();
+
+/* ---------- Idioma ---------- */
+(function(){
+  var nodes=[].slice.call(document.querySelectorAll('[data-en]'));
+  nodes.forEach(function(n){n.dataset.es=n.innerHTML});
+  function set(l){
+    LANG=l;nodes.forEach(function(n){n.innerHTML=n.dataset[l]});
+    document.documentElement.lang=l;
+    if(document.title.indexOf('Nelomux ·')===0)document.title=l==='en'?'Nelomux · Custom systems and process automation':'Nelomux · Sistemas a medida y automatización de procesos';
+    renderTabs();renderCase();if(window.__muxLang)window.__muxLang();
+  }
+  // Idioma automático: el primero de la lista de idiomas del navegador que sea español o inglés; si no hay ninguno, inglés.
+  function detect(){
+    if(location.hash==='#en')return 'en';
+    if(location.hash==='#es')return 'es';
+    var list=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);
+    for(var i=0;i<list.length;i++){var x=String(list[i]).toLowerCase().slice(0,2);if(x==='es')return 'es';if(x==='en')return 'en'}
+    return 'en';
+  }
+  try{localStorage.removeItem('nlx-lang');localStorage.removeItem('nlx-lang-choice')}catch(e){}
+  set(detect());
+})();
+
+/* ---------- Copiar ---------- */
+document.querySelectorAll('[data-copy]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var el=document.getElementById(b.dataset.copy),txt=el.textContent.trim();
+    var done=function(){var o=b.innerHTML;b.textContent=LANG==='en'?'Copied':'Copiado';setTimeout(function(){b.innerHTML=o},1600)};
+    var sel=function(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r)};
+    try{navigator.clipboard.writeText(txt).then(done,sel)}catch(e){sel()}
+  });
+});
+
+
+/* ---------- Entradas, contadores, barra del proceso ---------- */
+(function(){
+  if(!('IntersectionObserver' in window)||REDUCE)return;
+  var vh=innerHeight;
+  document.querySelectorAll('.rise').forEach(function(el){if(el.getBoundingClientRect().top>vh*.92)el.classList.add('pre')});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.remove('pre');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rise.pre').forEach(function(el){io.observe(el)});
+  var co=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;co.unobserve(e.target);var el=e.target,to=+el.dataset.count,pre=el.dataset.pre||'',t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/1400),v=Math.round(to*(1-Math.pow(1-k,3)));el.textContent=pre+v;if(k<1)requestAnimationFrame(f)})(t0)})},{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(function(el){co.observe(el)});
+  var steps=document.getElementById('steps'),items=[].slice.call(steps.children);
+  function prog(){var r=steps.getBoundingClientRect(),p=Math.max(0,Math.min(1,(innerHeight*.8-r.top)/(r.height+innerHeight*.3)));items.forEach(function(it,i){it.style.setProperty('--p',(Math.max(0,Math.min(1,p*items.length-i))*100)+'%')})}
+  addEventListener('scroll',prog,{passive:true});prog();
+})();
+
+
+/* ---------- Flujos y directrices detrás del símbolo ---------- */
+(function(){
+  var hero=document.getElementById('top'),sym=document.getElementById('sym');if(!hero||!sym||!hero.getContext&&!document.createElement('canvas').getContext)return;
+  var cv=document.createElement('canvas');cv.className='flows';cv.setAttribute('aria-hidden','true');hero.insertBefore(cv,hero.firstChild);
+  var ctx=cv.getContext('2d');if(!ctx)return;
+  var W=0,H=0,cx=0,cy=0,k=1,sh=0,dpr=1,streams=[],outs=[];
+  // Geometría del símbolo en unidades del 3D (retícula de 48, escala 1.3, desplazado -1.5)
+  var IN_X=-19.7,OUT_X=15.4,ROWS=[13,0,-13],UNITS=68.6;
+  function rnd(i){var x=Math.sin(i*127.1+11.7)*43758.5453;return x-Math.floor(x)}
+  function layout(){
+    dpr=Math.min(devicePixelRatio||1,2);
+    var hr=hero.getBoundingClientRect(),sr=sym.getBoundingClientRect();
+    W=hr.width;H=hr.height;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    cx=sr.left-hr.left+sr.width/2;cy=sr.top-hr.top+sr.height/2;sh=sr.height;k=sr.height/UNITS;
+    streams=[];var n=0;
+    for(var r=0;r<3;r++)for(var j=0;j<7;j++){
+      var spread=sh*.75,y0=cy+(rnd(n)-.5)*2*spread+(r-1)*sh*.18;
+      y0=Math.max(8,Math.min(H-8,y0));
+      streams.push({r:r,y0:y0,bend:.25+rnd(n+50)*.3,hot:j===0,a:.05+rnd(n+90)*.07,off:rnd(n+130),sp:.12+rnd(n+170)*.1});n++;
+    }
+    outs=[];for(var o=0;o<5;o++)outs.push({dy:(o-2)*sh*.16,hot:o===2,a:o===2?.5:.07,off:rnd(o+300),sp:.2+rnd(o+330)*.1});
+  }
+  function bez(p0,p1,p2,p3,u){var v=1-u;return v*v*v*p0+3*v*v*u*p1+3*v*u*u*p2+u*u*u*p3}
+  function curve(x0,y0,x1,y1,bend,dir){var c1x=x0+dir*Math.abs(x1-x0)*bend,c2x=x1-dir*Math.abs(x1-x0)*.35;return [x0,y0,c1x,y0,c2x,y1,x1,y1]}
+  function draw(t){
+    var rot=window.__nlxRot||{ry:0,rx:0,y:0},c=Math.cos(rot.ry),face=c>=0?1:-1,vis=Math.min(1,Math.abs(c)*2.2);
+    var bob=-(rot.y||0)*k,cxr=cx,cyr=cy+bob,cr=Math.cos(rot.rx);
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    // Campo de líneas que se estrechan detrás del tridente y bajan al hacer scroll
+    var par=Math.min(scrollY,H)*.35;
+    ctx.save();ctx.lineWidth=1;
+    for(var f=0;f<34;f++){
+      var off=(f-16.5)*sh*.055,alpha=.035+.05*(1-Math.abs(f-16.5)/17);
+      ctx.beginPath();
+      for(var x=0;x<=W;x+=12){
+        var d=(x-cxr)/(sh*.95),pinch=1-.82*Math.exp(-d*d),wave=Math.sin(x*.006+t*(REDUCE?0:.6)+f*.4)*sh*.02*pinch;
+        var y=cyr+par+off*pinch+wave;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=(f%6===3)?'rgba(255,91,31,'+(alpha*2.6).toFixed(3)+')':'rgba(238,240,244,'+alpha.toFixed(3)+')';
+      ctx.stroke();
+    }
+    ctx.restore();
+    // Núcleo: brillo, anillos tipo radar que giran, arcos naranjas, barrido y partículas que entran en espiral
+    var TT=REDUCE?0:t,R0=sh*.5;
+    var g=ctx.createRadialGradient(cxr,cyr,0,cxr,cyr,R0*1.25);
+    g.addColorStop(0,'rgba(255,91,31,'+(.16+.05*Math.sin(TT*1.8)).toFixed(3)+')');g.addColorStop(.45,'rgba(255,91,31,.05)');g.addColorStop(1,'rgba(255,91,31,0)');
+    ctx.fillStyle=g;ctx.fillRect(cxr-R0*1.3,cyr-R0*1.3,R0*2.6,R0*2.6);
+    ctx.save();ctx.translate(cxr,cyr);
+    // barrido
+    ctx.save();ctx.rotate(TT*.7);var sw=ctx.createLinearGradient(0,0,R0*1.05,0);sw.addColorStop(0,'rgba(255,91,31,.0)');sw.addColorStop(1,'rgba(255,91,31,.10)');
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R0*1.05,-.5,0);ctx.closePath();ctx.fillStyle=sw;ctx.fill();ctx.restore();
+    // anillo con marcas
+    ctx.save();ctx.rotate(TT*.12);ctx.strokeStyle='rgba(238,240,244,.16)';ctx.lineWidth=1;
+    for(var m=0;m<120;m++){var ang=m/120*Math.PI*2,l=m%10===0?10:4;ctx.beginPath();ctx.moveTo(Math.cos(ang)*R0*1.08,Math.sin(ang)*R0*1.08);ctx.lineTo(Math.cos(ang)*(R0*1.08+l),Math.sin(ang)*(R0*1.08+l));ctx.stroke()}
+    ctx.restore();
+    // arcos naranjas en sentido contrario
+    ctx.save();ctx.rotate(-TT*.25);ctx.lineCap='round';
+    [[0,.9,2.2,.55],[2.3,2.9,2.2,.35],[3.6,5.2,1.2,.45]].forEach(function(a){ctx.beginPath();ctx.arc(0,0,R0*.92,a[0],a[1]);ctx.strokeStyle='rgba(255,91,31,'+a[3]+')';ctx.lineWidth=a[2];ctx.stroke()});
+    ctx.restore();
+    ctx.save();ctx.rotate(TT*.4);ctx.setLineDash([1,9]);ctx.strokeStyle='rgba(255,140,90,.35)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R0*1.28,0,Math.PI*2);ctx.stroke();ctx.restore();
+    ctx.beginPath();ctx.arc(0,0,R0*.72,0,Math.PI*2);ctx.strokeStyle='rgba(238,240,244,.06)';ctx.lineWidth=1;ctx.stroke();
+    // partículas en espiral hacia el centro
+    for(var q=0;q<140;q++){
+      var life=((TT*.09+rnd(q+700))%1),rr=R0*(1.9-1.62*life),th=rnd(q+900)*Math.PI*2+life*3.2;
+      var px=Math.cos(th)*rr,py=Math.sin(th)*rr*.9,al=Math.sin(life*Math.PI)*.8;
+      ctx.beginPath();ctx.arc(px,py,q%9===0?1.8:1,0,Math.PI*2);ctx.fillStyle=q%4===0?'rgba(255,240,230,'+(al*.7).toFixed(3)+')':'rgba(255,110,50,'+al.toFixed(3)+')';ctx.fill();
+    }
+    ctx.restore();
+    // Directrices
+    ctx.save();ctx.setLineDash([2,7]);ctx.lineWidth=1;ctx.strokeStyle='rgba(238,240,244,.07)';
+    ROWS.forEach(function(ry){var y=cyr-ry*k*cr;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()});
+    ctx.beginPath();ctx.moveTo(cxr,0);ctx.lineTo(cxr,H);ctx.stroke();
+    ctx.beginPath();ctx.arc(cxr,cyr,sh*.46,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle='rgba(255,91,31,.12)';ctx.beginPath();ctx.arc(cxr,cyr,sh*.62,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+    if(vis<.02)return;
+    var edgeIn=face>0?0:W,edgeOut=face>0?W:0,dir=face;
+    var xin=cxr+IN_X*k*c,xout=cxr+OUT_X*k*c;
+    ctx.save();ctx.globalAlpha=vis;ctx.lineCap='round';
+    var pts=[];
+    streams.forEach(function(s){
+      var y1=cyr-ROWS[s.r]*k*cr,q=curve(edgeIn,s.y0,xin-dir*3*k,y1,s.bend,dir);
+      ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.bezierCurveTo(q[2],q[3],q[4],q[5],q[6],q[7]);
+      ctx.strokeStyle=s.hot?'rgba(255,91,31,.38)':'rgba(238,240,244,'+s.a.toFixed(3)+')';ctx.lineWidth=s.hot?1.6:1;ctx.stroke();
+      var u=(t*s.sp+s.off)%1;pts.push([bez(q[0],q[2],q[4],q[6],u),bez(q[1],q[3],q[5],q[7],u),s.hot,u]);
+    });
+    outs.forEach(function(o){
+      var x0=xout+dir*4*k,y1=cyr+o.dy,q=curve(x0,cyr,edgeOut,y1,.35,dir);
+      ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.bezierCurveTo(q[2],q[3],q[4],q[5],q[6],q[7]);
+      ctx.strokeStyle=o.hot?'rgba(255,91,31,.5)':'rgba(238,240,244,.07)';ctx.lineWidth=o.hot?2.4:1;ctx.stroke();
+      var u=(t*o.sp+o.off)%1;pts.push([bez(q[0],q[2],q[4],q[6],u),bez(q[1],q[3],q[5],q[7],u),o.hot,u]);
+    });
+    if(!REDUCE){
+      pts.forEach(function(p){var a=Math.sin(p[3]*Math.PI);ctx.beginPath();ctx.arc(p[0],p[1],p[2]?2.4:1.5,0,Math.PI*2);ctx.fillStyle=p[2]?'rgba(255,170,130,'+(.9*a)+')':'rgba(255,140,90,'+(.55*a)+')';ctx.shadowColor='rgba(255,91,31,.9)';ctx.shadowBlur=p[2]?12:6;ctx.fill()});
+    }
+    ctx.restore();
+  }
+  layout();
+  if('ResizeObserver' in window)new ResizeObserver(layout).observe(hero);else addEventListener('resize',layout);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
+  var on=true;if('IntersectionObserver' in window)new IntersectionObserver(function(es){on=es[0].isIntersecting}).observe(hero);
+  var t0=performance.now();
+  (function loop(now){requestAnimationFrame(loop);if(!on)return;draw((now-t0)/1000)})(t0);
+})();
+
+
+
+/* ---------- Líneas finas que bajan por la página, por debajo de las secciones ---------- */
+(function(){
+  var cv=document.createElement('canvas');cv.className='bgflows';cv.setAttribute('aria-hidden','true');document.body.insertBefore(cv,document.body.firstChild);
+  var ctx=cv.getContext('2d');if(!ctx)return;
+  var W=0,H=0,dpr=1,segs=[],joints=[];
+  function rnd(i){var x=Math.sin(i*91.7+3.3)*43758.5453;return x-Math.floor(x)}
+  function layout(){
+    dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    var sy=scrollY,hero=document.getElementById('top').getBoundingClientRect();
+    var ys=[hero.bottom+sy];
+    [].slice.call(document.querySelectorAll('main > section, main > div.sectors, .sectors')).forEach(function(el){var r=el.getBoundingClientRect();ys.push(r.bottom+sy)});
+    ys.push(document.querySelector('footer.site').getBoundingClientRect().top+sy);
+    ys=ys.filter(function(v,i,a){return a.indexOf(v)===i}).sort(function(a,b){return a-b});
+    joints=ys.map(function(y,i){return {x:W*(i%2?0.14:0.86),y:y}});
+    segs=[];
+    for(var j=0;j<joints.length-1;j++){
+      var a=joints[j],b=joints[j+1],n=9,mid=(a.y+b.y)/2;
+      for(var i=0;i<n;i++){
+        var mx=W*(0.04+0.92*(i/(n-1)))+(rnd(j*17+i)-.5)*W*.05,my=mid+(rnd(j*31+i)-.5)*(b.y-a.y)*.25;
+        segs.push({a:a,b:b,mx:mx,my:my,hot:i===Math.floor(n/2)+(j%2?-2:2),off:rnd(j*7+i),sp:.05+rnd(j*13+i)*.05});
+      }
+    }
+  }
+  function pt(s,u){ // dos cúbicas: nodo → punto medio → nodo, tangentes verticales en los extremos
+    var A,B,C,D,v;
+    if(u<.5){v=u*2;A=[s.a.x,s.a.y];B=[s.a.x,s.a.y+(s.my-s.a.y)*.6];C=[s.mx,s.my-(s.my-s.a.y)*.5];D=[s.mx,s.my]}
+    else{v=(u-.5)*2;A=[s.mx,s.my];B=[s.mx,s.my+(s.b.y-s.my)*.5];C=[s.b.x,s.b.y-(s.b.y-s.my)*.6];D=[s.b.x,s.b.y]}
+    var w=1-v;return [w*w*w*A[0]+3*w*w*v*B[0]+3*w*v*v*C[0]+v*v*v*D[0],w*w*w*A[1]+3*w*w*v*B[1]+3*w*v*v*C[1]+v*v*v*D[1]];
+  }
+  function draw(t){
+    var sy=scrollY,reveal=sy+H*.9;
+    ctx.setTransform(dpr,0,0,dpr,0,-sy*dpr);ctx.clearRect(0,sy,W,H);
+    ctx.save();ctx.beginPath();ctx.rect(0,sy,W,Math.max(0,reveal-sy));ctx.clip();
+    ctx.lineWidth=1;
+    segs.forEach(function(s){
+      if(s.b.y<sy-50||s.a.y>sy+H+50)return;
+      ctx.beginPath();ctx.moveTo(s.a.x,s.a.y);
+      ctx.bezierCurveTo(s.a.x,s.a.y+(s.my-s.a.y)*.6,s.mx,s.my-(s.my-s.a.y)*.5,s.mx,s.my);
+      ctx.bezierCurveTo(s.mx,s.my+(s.b.y-s.my)*.5,s.b.x,s.b.y-(s.b.y-s.my)*.6,s.b.x,s.b.y);
+      ctx.strokeStyle=s.hot?'rgba(255,91,31,.32)':'rgba(20,22,27,.075)';ctx.lineWidth=s.hot?1.3:1;ctx.stroke();
+    });
+    joints.forEach(function(j){if(j.y<sy-20||j.y>sy+H+20)return;ctx.beginPath();ctx.arc(j.x,j.y,3.2,0,Math.PI*2);ctx.fillStyle='#ff5b1f';ctx.fill();ctx.beginPath();ctx.arc(j.x,j.y,8,0,Math.PI*2);ctx.strokeStyle='rgba(255,91,31,.3)';ctx.stroke()});
+    if(!REDUCE){
+      segs.forEach(function(s){
+        if(s.b.y<sy-50||s.a.y>sy+H+50)return;
+        var u=(t*s.sp+s.off)%1,p=pt(s,u),a=Math.sin(u*Math.PI);
+        ctx.beginPath();ctx.arc(p[0],p[1],s.hot?2.2:1.4,0,Math.PI*2);ctx.fillStyle=s.hot?'rgba(255,91,31,'+(.9*a)+')':'rgba(255,120,70,'+(.5*a)+')';ctx.fill();
+      });
+    }
+    ctx.restore();
+  }
+  layout();
+  var tm;function rb(){clearTimeout(tm);tm=setTimeout(layout,120)}
+  addEventListener('resize',rb);if('ResizeObserver' in window)new ResizeObserver(rb).observe(document.body);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(rb);addEventListener('load',rb);
+  var t0=performance.now();(function loop(now){requestAnimationFrame(loop);draw((now-t0)/1000)})(t0);
+})();
+
+
+/* ---------- Pie interactivo ---------- */
+(function(){
+  var foot=document.querySelector('footer.site');if(!foot)return;
+  foot.addEventListener('click',function(e){
+    var b=e.target.closest('[data-sol],[data-case],[data-copytext]');if(!b)return;
+    if(b.dataset.sol){
+      var fb=document.querySelector('#filters button[data-f="'+b.dataset.filter+'"]');if(fb)fb.click();
+      var card=document.getElementById(b.dataset.sol);
+      document.getElementById('soluciones').scrollIntoView({behavior:REDUCE?'auto':'smooth'});
+      if(card){setTimeout(function(){card.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});card.classList.remove('flash');void card.offsetWidth;card.classList.add('flash')},REDUCE?0:650)}
+    }else if(b.dataset.case){
+      cur=+b.dataset.case;stepI=0;paused=false;renderTabs();renderCase();play();
+      document.getElementById('casos').scrollIntoView({behavior:REDUCE?'auto':'smooth'});
+    }else if(b.dataset.copytext){
+      var h=b.querySelector('.hint'),old=h.innerHTML;
+      var ok=function(){h.textContent=LANG==='en'?'copied':'copiado';b.classList.add('copied');setTimeout(function(){h.innerHTML=old;b.classList.remove('copied')},1600)};
+      try{navigator.clipboard.writeText(b.dataset.copytext).then(ok,function(){})}catch(_){}
+    }
+  });
+  // Explora marca la sección en la que estás
+  var links=[].slice.call(foot.querySelectorAll('[data-spy]'));
+  var secs=links.map(function(a){return document.getElementById(a.dataset.spy)}).filter(Boolean);
+  function spy(){var y=scrollY+innerHeight*.35,curId=null;secs.forEach(function(s){if(s.getBoundingClientRect().top+scrollY<=y)curId=s.id});if(scrollY+innerHeight>=document.documentElement.scrollHeight-4&&secs.length)curId=secs[secs.length-1].id;links.forEach(function(a){a.classList.toggle('on',a.dataset.spy===curId);if(a.dataset.spy===curId)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')})}
+  addEventListener('scroll',spy,{passive:true});spy();
+})();
+
+/* ---------- Símbolo 3D sólido (como en la factura) ---------- */
+(function(){
+  var stage=document.getElementById('sym');
+  if(!window.THREE)return;
+  var renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return}
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+  renderer.setClearColor(0x000000,0);stage.appendChild(renderer.domElement);
+  var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(30,1,1,1000);camera.position.set(0,0,128);
+  var lin=function(h){return new THREE.Color(h).convertSRGBToLinear()};
+  // Reflejos suaves de estudio claro
+  var env=new THREE.Scene();env.add(new THREE.Mesh(new THREE.SphereGeometry(200,32,16),new THREE.MeshBasicMaterial({color:lin(0x9a9890),side:THREE.BackSide})));
+  function panel(c,w,h,x,y,z){var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);env.add(m)}
+  panel(new THREE.Color(4,4,3.8),160,50,40,120,110);panel(new THREE.Color(2,2,2.1),50,160,-160,0,40);panel(new THREE.Color(1.6,1.2,1),80,30,140,-60,-40);
+  var pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(env,.03).texture;
+  var P=function(x,y,z){return new THREE.Vector3(x-24,24-y,z||0)};
+  var root=new THREE.Group();scene.add(root);
+  var s=new THREE.Shape(),h=24,r=12;
+  s.moveTo(-h+r,-h);s.lineTo(h-r,-h);s.quadraticCurveTo(h,-h,h,-h+r);s.lineTo(h,h-r);s.quadraticCurveTo(h,h,h-r,h);s.lineTo(-h+r,h);s.quadraticCurveTo(-h,h,-h,h-r);s.lineTo(-h,-h+r);s.quadraticCurveTo(-h,-h,-h+r,-h);
+  var D=6,bev=1.3;
+  var g=new THREE.ExtrudeGeometry(s,{depth:D,bevelEnabled:true,bevelThickness:bev,bevelSize:1,bevelSegments:8,curveSegments:40});g.translate(0,0,-D/2);
+  var tileMat=new THREE.MeshPhysicalMaterial({color:lin(0x1a1d24),roughness:.34,metalness:.3,clearcoat:.9,clearcoatRoughness:.2,envMapIntensity:1.1});
+  var volt=lin(0xff5b1f);
+  var wire=new THREE.MeshPhysicalMaterial({color:volt,emissive:volt,emissiveIntensity:.4,roughness:.3,metalness:.1,clearcoat:1,clearcoatRoughness:.1});
+  var FZ=D/2+bev+.9;
+  function side(z,flip){
+    var gr=new THREE.Group(),top=new THREE.CurvePath(),mid=new THREE.CurvePath(),bot=new THREE.CurvePath();
+    top.add(new THREE.LineCurve3(P(10,14,z),P(15,14,z)));top.add(new THREE.CubicBezierCurve3(P(15,14,z),P(22.5,14,z),P(23,24,z),P(30,24,z)));top.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
+    mid.add(new THREE.LineCurve3(P(10,24,z),P(37,24,z)));
+    bot.add(new THREE.LineCurve3(P(10,34,z),P(15,34,z)));bot.add(new THREE.CubicBezierCurve3(P(15,34,z),P(22.5,34,z),P(23,24,z),P(30,24,z)));bot.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
+    var cs=[top,mid,bot];cs.forEach(function(c){gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.7,24,false),wire))});
+    [14,24,34].forEach(function(y){var m=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,24),wire);m.position.copy(P(10,y,z));gr.add(m)});
+    var o=new THREE.Mesh(new THREE.SphereGeometry(4.6,40,30),wire);o.position.copy(P(37,24,z));gr.add(o);
+    if(flip)gr.rotation.y=Math.PI;root.add(gr);return {g:gr,cs:cs};
+  }
+  var faces=[side(0,false)];root.scale.setScalar(1.3);root.position.x=-1.5;
+  var pmat=new THREE.MeshBasicMaterial({color:new THREE.Color(2.2,1.7,1.4)}),pulses=[];
+  faces.forEach(function(f){f.cs.forEach(function(c,i){var m=new THREE.Mesh(new THREE.SphereGeometry(1.05,16,12),pmat);f.g.add(m);pulses.push({m:m,c:c,off:i*.33})})});
+  scene.add(new THREE.AmbientLight(0xffffff,.3));var rim=new THREE.DirectionalLight(0xffffff,1.1);rim.position.set(-70,40,-80);scene.add(rim);var rim2=new THREE.DirectionalLight(0xff8a5c,.9);rim2.position.set(80,-30,-60);scene.add(rim2);
+  var key=new THREE.DirectionalLight(0xffffff,1.2);key.position.set(50,80,100);scene.add(key);
+  var fill=new THREE.DirectionalLight(0xffe4d8,.5);fill.position.set(-80,-20,60);scene.add(fill);
+  function size(){var b=stage.getBoundingClientRect(),W=Math.max(1,b.width),H=Math.max(1,b.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix()}
+  size();addEventListener('resize',size);
+  var ry=0,rx=0,vel=0,drag=false,lx=0,ly=0,spinFrom=0,spinT=-1,t=0,next=3.5;
+  var hwm=document.getElementById('hwm'),letters=hwm?[].slice.call(hwm.querySelectorAll('span')):[];
+  [stage,hwm].forEach(function(el){if(!el)return;
+    el.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse')return;drag=true;lx=e.clientX;ly=e.clientY;vel=0;spinT=-1;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+    el.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;ry+=dx*.015;vel=dx*.015;rx=Math.max(-.6,Math.min(.6,rx+dy*.008))});
+    el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  });
+  function end(){if(drag){drag=false;next=t+4}}
+  // Con mouse no hace falta presionar: el símbolo y NELOMUX miran hacia el cursor mientras está sobre la portada
+  var heroEl=document.getElementById('top'),hover=false,hx=0,hy=0;
+  heroEl.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;hover=true;var r=stage.getBoundingClientRect();
+    hx=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(innerWidth*.5)));hy=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight*.5)))});
+  heroEl.addEventListener('pointerleave',function(){hover=false;vel=0});
+  var visible=true;if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting}).observe(stage);
+  var clock=new THREE.Clock();
+  var ease=function(k){return k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2};
+  function frame(){
+    requestAnimationFrame(frame);if(!visible)return;
+    var dt=Math.min(clock.getDelta(),.05);t+=dt;
+    if(hover&&!drag){
+      var base=Math.round(ry/(Math.PI*2))*Math.PI*2;
+      ry+=((base+hx*1.05)-ry)*.08;rx+=((hy*.6)-rx)*.08;vel=0;
+    }else if(!drag){
+      ry+=vel+(REDUCE?0:.55*dt);vel*=.92;
+      rx+=((REDUCE?-.08:-.1+Math.sin(t*.6)*.1)-rx)*.05;
+    }
+    root.rotation.y=ry;root.rotation.x=rx;window.__nlxRot={ry:ry,rx:rx,y:root.position.y};
+    if(hwm&&!REDUCE){
+      var sy=Math.sin(ry),cy=Math.cos(ry);
+      hwm.style.setProperty('--wy',(sy*24).toFixed(2)+'deg');
+      hwm.style.setProperty('--wx',(-rx*30).toFixed(2)+'deg');
+      hwm.style.setProperty('--sx',(-sy*1.1).toFixed(3));
+      hwm.style.setProperty('--sy',(.55+rx*.8).toFixed(3));
+      for(var i=0;i<letters.length;i++)letters[i].style.setProperty('--f',(Math.sin(t*2.2-i*.55)*3*Math.abs(cy)).toFixed(2)+'px');
+    }
+    pulses.forEach(function(p){var u=(t*.35+p.off)%1;p.m.position.copy(p.c.getPointAt(u));p.m.scale.setScalar(u>.9?(1-u)/.1:1)});
+    renderer.render(scene,camera);
+  }
+  stage.classList.add('ready');frame();
+})();
+</script>
+
+</body>
+</html>
