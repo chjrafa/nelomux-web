@@ -53,6 +53,7 @@ a{color:inherit}
 .home{display:flex;align-items:center;gap:10px;text-decoration:none}
 .home svg{width:30px;height:30px}
 .home .wm{font-size:18px}
+.nav .btn{margin-left:auto}
 .nav .back{margin-left:auto;color:var(--muted-dk);font-size:15px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 .nav .back:hover{color:#fff}
 .nav .btn{min-height:44px;font-size:14px;padding:0 16px}
@@ -98,7 +99,12 @@ legend{font-size:14px;font-weight:600;padding:0;margin-bottom:8px}
 .st[data-kind="err"]{color:var(--err)}
 .fine{font-size:13px;color:var(--muted);text-align:center}
 .form .wa-alt{justify-self:center;font-size:14px;color:var(--muted)}
-.form.sent .hide-sent{display:none}
+.form.sent .hide-sent{display:none!important}
+.form .show-sent{display:none}
+.form.sent .show-sent{display:grid;gap:12px;padding-top:16px;margin-top:4px;border-top:1px solid var(--line);animation:aparece .5s ease both}
+.show-sent p{color:var(--muted);font-size:15px;text-align:center}
+.show-sent .btn.ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink);min-height:50px;font-size:16px}
+@keyframes aparece{from{opacity:0;transform:translateY(8px)}}
 
 /* secciones claras */
 section.b{padding-block:clamp(64px,8vw,104px)}
@@ -168,8 +174,7 @@ footer a{color:var(--muted-dk)}
 <body>
 <nav class="nav" aria-label="Principal">
   <div class="wrap bar">
-    <a class="home" href="/" aria-label="Nelomux, inicio"><svg viewBox="4 4 40 40" aria-hidden="true"><path d="M10 14H15C22.5 14 23 24 30 24M10 24H30M10 34H15C22.5 34 23 24 30 24M30 24H34" fill="none" stroke="#FF5B1F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="14" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="24" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="34" r="2.6" fill="#FF5B1F"/><circle cx="37" cy="24" r="4.6" fill="#FF5B1F"/></svg><span class="wm">NELO<b>MUX</b></span></a>
-    <a class="back" href="/" data-en="See the full site">Ver el sitio completo</a>
+    <span class="home" aria-label="Nelomux"><svg viewBox="4 4 40 40" aria-hidden="true"><path d="M10 14H15C22.5 14 23 24 30 24M10 24H30M10 34H15C22.5 34 23 24 30 24M30 24H34" fill="none" stroke="#FF5B1F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="14" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="24" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="34" r="2.6" fill="#FF5B1F"/><circle cx="37" cy="24" r="4.6" fill="#FF5B1F"/></svg><span class="wm">NELO<b>MUX</b></span></span>
     <a class="btn primary" href="#formulario" data-en="Book a demo">Agendar demo</a>
   </div>
 </nav>
@@ -219,6 +224,11 @@ footer a{color:var(--muted-dk)}
       </div>
       <p class="st" data-status role="status" aria-live="polite"></p>
       <a class="wa-alt" data-wa hidden href="#" target="_blank" rel="noopener" data-en="Send by WhatsApp instead">Enviar por WhatsApp</a>
+      <div class="show-sent">
+        <p data-en="While we write to you, take a look at what we build.">Mientras te escribimos, mira lo que hacemos.</p>
+        <a class="btn primary" href="/#casos" data-en="See our work →">Ver nuestro trabajo →</a>
+        <a class="btn ghost" href="/#soluciones" data-en="See our solutions">Ver soluciones</a>
+      </div>
       <p class="fine hide-sent" data-en="We only use your details to reply to you.">Solo usamos tus datos para responderte.</p>
     </form>
   </div>
@@ -280,7 +290,7 @@ footer a{color:var(--muted-dk)}
     <div class="acts"><a class="btn primary" href="#formulario" data-en="Book a demo">Agendar demo</a><a class="btn ghost" id="wa-end" href="https://wa.me/584246759019" target="_blank" rel="noopener" data-en="Message on WhatsApp">Escribir por WhatsApp</a></div>
   </div>
 </section>
-<footer><div class="wrap"><span><b style="color:#fff">Nelomux</b> · <span data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</span></span><span>© 2026 · <a href="/">nelomux.com</a></span></div></footer>
+<footer><div class="wrap"><span><b style="color:#fff">Nelomux</b> · <span data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</span></span><span>© 2026 · nelomux.com</span></div></footer>
 
 <script src="../config.js"></script>
 <script src="../lead.js"></script>
