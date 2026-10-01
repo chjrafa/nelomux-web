@@ -455,6 +455,15 @@ footer.site nav{display:block}
 @keyframes muxflow{to{stroke-dashoffset:-21}}
 @keyframes muxring{0%{opacity:.9;transform:scale(.9)}100%{opacity:0;transform:scale(1.9)}}
 @media (prefers-reduced-motion:reduce){.mux.all .in .wire,.mux.all .core .ring{animation:none}}
+
+/* Misma temática en todas las bandas negras: paneles translúcidos y letras con relieve */
+.muxbox{background:rgba(29,32,40,.42);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.muxcap{background:rgba(20,22,27,.55);border-color:rgba(255,255,255,.09)}
+.dark h2,.contact h2{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 16px 34px rgba(0,0,0,.6)}
+.dark h2 em,.contact h2 em{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,4px 4px 0 #4a1604,0 0 30px rgba(255,91,31,.35),0 16px 34px rgba(0,0,0,.5)}
+.hero h1{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 18px 36px rgba(0,0,0,.55)}
+.hero h1 em{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,4px 4px 0 #4a1604,0 0 30px rgba(255,91,31,.35),0 18px 36px rgba(0,0,0,.5)}
+.cform h3{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #1d2027,0 8px 18px rgba(0,0,0,.5)}
 </style>
 </head>
 <body>
@@ -590,7 +599,7 @@ footer.site nav{display:block}
   </div>
 </section>
 
-<section class="block dark" id="marca">
+<section class="block dark" id="marca" data-net="0.7,0.5">
   <div class="wrap brand">
     <div class="copy rise">
       <span class="kick" data-en="Why Nelomux">Por qué Nelomux</span>
@@ -675,7 +684,7 @@ footer.site nav{display:block}
 </section>
 </main>
 
-<footer class="site">
+<footer class="site" data-net="0.86,0.35">
   <div class="wrap">
     <div class="foot">
       <div class="brandcol"><a class="wmlink" href="#top" aria-label="Nelomux, volver arriba"><span class="wm big">NELO<b>MUX</b></span></a><p class="tag" data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</p><a class="btn primary foot-cta" href="#contacto" data-en="Book a call">Agenda una llamada</a></div>

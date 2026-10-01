@@ -153,6 +153,39 @@ footer a{color:var(--muted-dk)}
   .nav .back{display:none}.nav .btn{margin-left:auto}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ===== Toda la página en la temática oscura: líneas de conexión, paneles translúcidos y letras con relieve ===== */
+body{background:var(--tile);color:var(--paper-dk)}
+section.b{border-top:1px solid var(--line-dk)}
+.kick{color:#ff9468}
+.head h2,.end h2{color:#fff;text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 16px 34px rgba(0,0,0,.6)}
+.hero h1{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 18px 36px rgba(0,0,0,.55)}
+.hero h1 em{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,4px 4px 0 #4a1604,0 0 30px rgba(255,91,31,.35),0 18px 36px rgba(0,0,0,.5)}
+.head p,.steps p,.pain p,.sol p,.faq details p{color:var(--muted-dk)}
+.steps li,.sol,.faq details{background:rgba(29,32,40,.42);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 50px -30px rgba(0,0,0,.8)}
+.steps h3,.sol h3,.pain h3{color:#fff;text-shadow:1px 1px 0 #2b2f37,2px 2px 0 #15171c,0 6px 14px rgba(0,0,0,.5)}
+.steps .n{color:#ff9468}
+.steps .meta{border-top-color:rgba(255,255,255,.1);color:var(--muted-dk)}
+.pain{border-top-color:rgba(255,255,255,.14)}
+.pain b{color:#ff9468}
+.sectors{border-top-color:rgba(255,255,255,.1);color:var(--muted-dk)}
+.sectors b{color:#fff}
+.faq summary{color:#fff}
+.faq summary::after{color:#ff9468}
+.end{border-top:1px solid var(--line-dk)}
+/* formulario translúcido */
+.form{background:rgba(29,32,40,.5);color:#fff;border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 30px 60px -20px rgba(0,0,0,.7)}
+.form h2{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #1d2027,0 8px 18px rgba(0,0,0,.5)}
+.form .sub,.fine,.form .wa-alt,label.f small{color:var(--muted-dk)}
+label.f,legend{color:#d8dbe2}
+input,select,textarea{background:rgba(14,16,20,.6);border-color:rgba(255,255,255,.14);color:#fff}
+input:focus,select:focus,textarea:focus{background:rgba(14,16,20,.85)}
+select option{background:#14161b;color:#fff}
+.chips span{background:rgba(14,16,20,.5);border-color:rgba(255,255,255,.16);color:#d8dbe2}
+.chips input:checked+span{background:var(--brand);border-color:var(--brand);color:var(--ink)}
+.st[data-kind="ok"]{color:#6fd49a}
+.st[data-kind="err"]{color:#ff8d98}
+::placeholder{color:#7d8492}
 </style>
 </head>
 <body>
@@ -220,7 +253,7 @@ footer a{color:var(--muted-dk)}
 </header>
 
 <main>
-<section class="b">
+<section class="b" data-net="0.8,0.55">
   <div class="wrap">
     <div class="head"><span class="kick" data-en="How it works">Cómo funciona</span><h2 data-en="Three steps, and you only pay if it’s useful.">Tres pasos, y pagas solo si te sirve.</h2></div>
     <ol class="steps">
@@ -231,7 +264,7 @@ footer a{color:var(--muted-dk)}
   </div>
 </section>
 
-<section class="b" style="padding-top:0">
+<section class="b" data-net="0.2,0.5" style="padding-top:0">
   <div class="wrap">
     <div class="head"><span class="kick" data-en="Sound familiar?">¿Te suena?</span><h2 data-en="Three signs your company already needs a system.">Tres señales de que tu empresa ya necesita un sistema.</h2></div>
     <div class="pains">
@@ -242,7 +275,7 @@ footer a{color:var(--muted-dk)}
   </div>
 </section>
 
-<section class="b" style="padding-top:0">
+<section class="b" data-net="0.75,0.45" style="padding-top:0">
   <div class="wrap">
     <div class="head"><span class="kick" data-en="What we automate">Qué automatizamos</span><h2 data-en="From the first message to the paid invoice.">Del primer mensaje a la factura cobrada.</h2></div>
     <div class="sols">
@@ -255,7 +288,7 @@ footer a{color:var(--muted-dk)}
   </div>
 </section>
 
-<section class="b" style="padding-top:0">
+<section class="b" data-net="0.25,0.4" style="padding-top:0">
   <div class="wrap">
     <div class="head"><span class="kick" data-en="Questions">Preguntas</span><h2 data-en="Before you book.">Antes de agendar.</h2></div>
     <div class="faq">

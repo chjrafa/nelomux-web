@@ -132,6 +132,16 @@ td .sub{color:var(--muted);font-size:13px}
 
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.col{max-height:none}}
 @media (max-width:560px){.top .who{display:none}.g2{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.kv dt{margin-top:6px}.board{grid-auto-columns:86%}}
+
+/* Misma temática del sitio: líneas detrás del tablero, paneles translúcidos y cifras con relieve */
+main{min-height:calc(100vh - 70px)}
+.kpi,.col,.tbl{background:rgba(21,24,30,.55);border-color:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.cardx{background:rgba(28,32,40,.78)}
+th{background:rgba(28,32,40,.9)}
+.kpi b{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #15171c,0 10px 22px rgba(0,0,0,.55)}
+.kpi.o b{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,0 0 24px rgba(255,91,31,.35),0 10px 22px rgba(0,0,0,.5)}
+.gate h1,.drawer .hd h2{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #1d2027,0 8px 18px rgba(0,0,0,.5)}
+.gate .box{background:rgba(21,24,30,.6);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 </style>
 </head>
 <body>
@@ -175,7 +185,7 @@ td .sub{color:var(--muted);font-size:13px}
     <button class="btn ghost" type="button" id="b-out">Salir</button>
   </div></header>
   <div class="demo" id="demo-bar" hidden>Modo demostración: son datos de ejemplo y nada se guarda. Conecta Supabase para usar tus contactos reales.</div>
-  <main>
+  <main data-net="0.82,0.18">
     <section class="kpis" aria-label="Resumen">
       <div class="kpi"><span class="lab">Nuevos · 7 días</span><b id="k-new">0</b><span id="k-new-s">contactos que llegaron esta semana</span></div>
       <div class="kpi"><span class="lab">En proceso</span><b id="k-open">0</b><span>contactado, demo o propuesta</span></div>
