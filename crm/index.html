@@ -176,7 +176,7 @@ th{background:rgba(28,32,40,.9)}
 <div id="app" hidden>
   <header class="top"><div class="in">
     <a class="brand" href="/"><svg viewBox="4 4 40 40"><use href="#mk"/></svg><span class="wm">NELO<b>MUX</b></span><span class="t">CRM</span></a>
-    <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar por nombre, empresa, correo o teléfono" aria-label="Buscar"></label>
+    <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar por nombre, empresa, correo, teléfono o Instagram" aria-label="Buscar"></label>
     <div class="seg" role="group" aria-label="Vista"><button type="button" id="v-board" aria-pressed="true">Embudo</button><button type="button" id="v-list" aria-pressed="false">Lista</button></div>
     <button class="btn primary" type="button" id="b-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo</button>
     <button class="btn" type="button" id="b-csv">Exportar CSV</button>
@@ -244,6 +244,7 @@ function demoApi(){
     {nombre:'Jorge Ramírez',empresa:'Logística Express',email:'jorge@ejemplo.com',whatsapp:'+58 412 555 0106',interes:['inventario','reportes'],equipo:'50+',mensaje:'',origen:'referido',etapa:'ganado',valor:6300,created_at:h(400)},
     {nombre:'Patricia Gómez',empresa:'Tienda Online',email:'pati@ejemplo.com',whatsapp:null,interes:['otro'],equipo:'1-5',mensaje:'Solo estaba averiguando precios.',origen:'landing /demo',etapa:'perdido',created_at:h(500)}
   ].map((x,i)=>Object.assign({id:'demo-'+i,valor:null,proximo_paso:null,proxima_fecha:null,updated_at:x.created_at,idioma:'es'},x));
+  L.unshift(Object.assign({id:'demo-mc',valor:null,proximo_paso:null,proxima_fecha:null,idioma:'es',email:null,whatsapp:null},{nombre:'Valeria Torres',empresa:null,instagram:'valeria.estudio',manychat_id:'123456',interes:['setters'],equipo:null,mensaje:'Vi el reel del setter, ¿cuánto cuesta?',origen:'manychat · instagram',etapa:'nuevo',created_at:h(1),updated_at:h(1)}));
   const E={};L.forEach(l=>E[l.id]=[{id:'e'+l.id,lead_id:l.id,tipo:'sistema',texto:'Contacto recibido desde '+(l.origen||'el sitio'),created_at:l.created_at}]);
   const ev=(id,tipo,texto)=>(E[id]=E[id]||[]).unshift({id:'e'+Math.random(),lead_id:id,tipo,texto,created_at:new Date().toISOString()});
   return{
@@ -259,7 +260,7 @@ function demoApi(){
 /* ---------- estado y vistas ---------- */
 let leads=[],view='board',openId=null;
 function filtered(){const q=$('#q').value.trim().toLowerCase();if(!q)return leads;const qd=digits(q);
-  return leads.filter(l=>[l.nombre,l.empresa,l.email,l.mensaje].some(v=>String(v||'').toLowerCase().includes(q))||(qd.length>3&&digits(l.whatsapp).includes(qd)))}
+  return leads.filter(l=>[l.nombre,l.empresa,l.email,l.mensaje,l.instagram].some(v=>String(v||'').toLowerCase().includes(q))||(qd.length>3&&digits(l.whatsapp).includes(qd)))}
 function dueTag(l){if(!l.proxima_fecha||['ganado','perdido'].includes(l.etapa))return'';const t=today();
   const cls=l.proxima_fecha<t?'late':l.proxima_fecha===t?'due':'';const lab=l.proxima_fecha<t?'Atrasado':l.proxima_fecha===t?'Hoy':new Date(l.proxima_fecha+'T12:00').toLocaleDateString('es-CL',{day:'numeric',month:'short'});
   return`<span class="tag ${cls}">${esc(lab)}</span>`}
@@ -274,14 +275,14 @@ function kpis(){
 function card(l){return`<button type="button" class="cardx" draggable="true" data-id="${esc(l.id)}">
   <span class="n">${esc(l.nombre)}</span>${l.empresa?`<span class="c">${esc(l.empresa)}</span>`:''}
   <span class="tags">${(l.interes||[]).slice(0,3).map(i=>`<span class="tag">${esc(INT[i]||i)}</span>`).join('')}${l.valor?`<span class="tag val">${esc(money(l.valor))}</span>`:''}${dueTag(l)}</span>
-  <span class="meta"><span>${esc(l.proximo_paso||(l.whatsapp?'WA '+l.whatsapp:l.email||''))}</span><span>${esc(ago(l.created_at))}</span></span></button>`}
+  <span class="meta"><span>${esc(l.proximo_paso||(l.whatsapp?'WA '+l.whatsapp:l.instagram?'@'+l.instagram:l.email||''))}</span><span>${esc(ago(l.created_at))}</span></span></button>`}
 function render(){
   kpis();const F=filtered();
   if(view==='board'){
     $('#board').innerHTML=ST.map(s=>{const it=F.filter(l=>l.etapa===s.k);
       return`<div class="col" data-st="${s.k}"><h2><span class="l"><i style="background:${s.c}"></i>${s.t}</span><em>${it.length}</em></h2><div class="list">${it.length?it.map(card).join(''):'<p class="empty">Sin contactos</p>'}</div></div>`}).join('');
   }else{
-    $('#rows').innerHTML=F.length?F.map(l=>`<tr data-id="${esc(l.id)}"><td><b>${esc(l.nombre)}</b><div class="sub">${esc([l.empresa,l.whatsapp||l.email].filter(Boolean).join(' · '))}</div></td>
+    $('#rows').innerHTML=F.length?F.map(l=>`<tr data-id="${esc(l.id)}"><td><b>${esc(l.nombre)}</b><div class="sub">${esc([l.empresa,l.whatsapp||(l.instagram?'@'+l.instagram:'')||l.email].filter(Boolean).join(' · '))}</div></td>
       <td><span class="pill"><i style="background:${STN[l.etapa].c}"></i>${STN[l.etapa].t}</span></td><td class="sub">${esc((l.interes||[]).map(i=>INT[i]||i).join(', '))}</td>
       <td>${esc(l.proximo_paso||'')} ${dueTag(l)}</td><td>${l.valor?esc(money(l.valor)):''}</td><td class="sub">${esc(ago(l.created_at))}</td></tr>`).join(''):`<tr><td colspan="6" class="nores">No hay contactos que coincidan.</td></tr>`;
   }
@@ -310,8 +311,8 @@ async function openDrawer(id){
   const wa=digits(l.whatsapp),hi=encodeURIComponent(`Hola ${l.nombre.split(' ')[0]}, te escribo de Nelomux por la demo que pediste.`);
   D.innerHTML=`<div class="hd"><span class="lab">${esc(STN[l.etapa].t)} · llegó ${esc(fdate(l.created_at))}</span><h2 id="d-name">${esc(l.nombre)}</h2><p>${esc(l.empresa||'Sin empresa')}</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
   <div class="bd">
-    <div class="acts">${wa?`<a class="btn primary" href="https://wa.me/${wa}?text=${hi}" target="_blank" rel="noopener">WhatsApp</a><a class="btn" href="tel:+${wa}">Llamar</a>`:''}${l.email?`<a class="btn" href="mailto:${esc(l.email)}">Correo</a>`:''}</div>
-    <dl class="kv"><dt>WhatsApp</dt><dd>${esc(l.whatsapp||'—')}</dd><dt>Correo</dt><dd>${esc(l.email||'—')}</dd><dt>Equipo</dt><dd>${esc(l.equipo?l.equipo+' personas':'—')}</dd>
+    <div class="acts">${wa?`<a class="btn primary" href="https://wa.me/${wa}?text=${hi}" target="_blank" rel="noopener">WhatsApp</a><a class="btn" href="tel:+${wa}">Llamar</a>`:''}${l.instagram?`<a class="btn${wa?'':' primary'}" href="https://ig.me/m/${encodeURIComponent(l.instagram)}" target="_blank" rel="noopener">Instagram</a>`:''}${l.email?`<a class="btn" href="mailto:${esc(l.email)}">Correo</a>`:''}</div>
+    <dl class="kv"><dt>WhatsApp</dt><dd>${esc(l.whatsapp||'—')}</dd><dt>Instagram</dt><dd>${esc(l.instagram?'@'+l.instagram:'—')}</dd><dt>Correo</dt><dd>${esc(l.email||'—')}</dd><dt>Equipo</dt><dd>${esc(l.equipo?l.equipo+' personas':'—')}</dd>
       <dt>Interés</dt><dd>${esc((l.interes||[]).map(i=>INT[i]||i).join(', ')||'—')}</dd><dt>Mensaje</dt><dd style="white-space:pre-wrap">${esc(l.mensaje||'—')}</dd><dt>Origen</dt><dd>${esc(l.origen||'—')}</dd></dl>
     <div class="box">
       <div class="g2"><label class="fld"><span class="lab">Etapa</span><select id="d-st">${ST.map(s=>`<option value="${s.k}"${s.k===l.etapa?' selected':''}>${s.t}</option>`).join('')}</select></label>
@@ -346,21 +347,21 @@ $('#b-new').addEventListener('click',()=>{openId=null;
   D.innerHTML=`<div class="hd"><span class="lab">Nuevo contacto</span><h2 id="d-name">Agregar a mano</h2><p>Para contactos que llegan por llamada, referido o redes.</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
   <form class="bd" id="nf"><label class="fld"><span class="lab">Nombre</span><input name="nombre" required minlength="2" maxlength="120"></label>
     <div class="g2"><label class="fld"><span class="lab">Empresa</span><input name="empresa" maxlength="160"></label><label class="fld"><span class="lab">WhatsApp</span><input name="whatsapp" type="tel" maxlength="40"></label></div>
-    <label class="fld"><span class="lab">Correo</span><input name="email" type="email" maxlength="200"></label>
+    <div class="g2"><label class="fld"><span class="lab">Correo</span><input name="email" type="email" maxlength="200"></label><label class="fld"><span class="lab">Instagram</span><input name="instagram" maxlength="100" placeholder="@usuario"></label></div>
     <label class="fld"><span class="lab">Origen</span><input name="origen" maxlength="300" placeholder="Ej.: referido de Juan, Instagram DM"></label>
     <label class="fld"><span class="lab">Notas</span><textarea name="mensaje" maxlength="2000"></textarea></label>
     <p class="msg" id="nf-msg" style="color:var(--bad);margin:0"></p></form>
   <div class="ft"><span class="msg"></span><button class="btn" type="button" id="nf-c">Cancelar</button><button class="btn primary" type="submit" form="nf">Crear contacto</button></div>`;
   D.hidden=false;$('#scrim').hidden=false;D.querySelector('.x').addEventListener('click',closeDrawer);$('#nf-c').addEventListener('click',closeDrawer);D.querySelector('input').focus();
   $('#nf').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),g=k=>(f.get(k)||'').toString().trim()||null;
-    const p={nombre:g('nombre'),empresa:g('empresa'),whatsapp:g('whatsapp'),email:g('email'),origen:g('origen')||'a mano',mensaje:g('mensaje')};
-    if(!p.email&&!p.whatsapp){$('#nf-msg').textContent='Agrega WhatsApp o correo.';return}
+    const p={nombre:g('nombre'),empresa:g('empresa'),whatsapp:g('whatsapp'),email:g('email'),instagram:(g('instagram')||'').replace(/^@/,'')||null,origen:g('origen')||'a mano',mensaje:g('mensaje')};
+    if(!p.email&&!p.whatsapp&&!p.instagram){$('#nf-msg').textContent='Agrega WhatsApp, correo o Instagram.';return}
     try{const l=await api.add(p);leads.unshift(l);render();openDrawer(l.id);toast('Contacto creado')}catch(err){$('#nf-msg').textContent='No se pudo crear. Revisa los datos.'}});
 });
 
 /* exportar */
 $('#b-csv').addEventListener('click',()=>{
-  const cols=['created_at','nombre','empresa','whatsapp','email','etapa','valor','proximo_paso','proxima_fecha','equipo','interes','mensaje','origen'];
+  const cols=['created_at','nombre','empresa','whatsapp','email','instagram','etapa','valor','proximo_paso','proxima_fecha','equipo','interes','mensaje','origen'];
   const q=v=>'"'+String(Array.isArray(v)?v.join(', '):v??'').replace(/"/g,'""')+'"';
   const csv='﻿'+cols.join(',')+'\n'+filtered().map(l=>cols.map(c=>q(l[c])).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='nelomux-contactos-'+today()+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)});
