@@ -1163,6 +1163,20 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
     if(flip)gr.rotation.y=Math.PI;root.add(gr);return {g:gr,cs:cs};
   }
   var faces=[side(0,false)];root.scale.setScalar(1.3);root.position.x=-1.5;
+  // Circuitos que salen del símbolo y giran con él: pistas con codos de 45°, anillos de soldadura y cargas que corren hacia el logo
+  var trMat=new THREE.MeshStandardMaterial({color:lin(0xc7430f),emissive:lin(0xff5b1f),emissiveIntensity:.28,roughness:.42,metalness:.5});
+  var viaMat=new THREE.MeshStandardMaterial({color:lin(0xff8a5c),emissive:lin(0xff5b1f),emissiveIntensity:.4,roughness:.3,metalness:.6});
+  var sparkMat=new THREE.MeshBasicMaterial({color:new THREE.Color(2.4,1.1,.45)});
+  var TR=[[[10,14],[5,14],[3,12],[3,7]],[[10,24],[2.5,24]],[[10,34],[5,34],[3,36],[3,41]],[[15,14],[15,9],[18,6.5],[28,6.5]],[[15,34],[15,39],[18,41.5],[28,41.5]],
+          [[40,21],[43.5,17.5],[43.5,11]],[[40,27],[43.5,30.5],[43.5,37]],[[41.6,24],[46,24]],[[28,6.5],[32,6.5],[35,9.5],[35,12]],[[28,41.5],[32,41.5],[35,38.5],[35,36]]];
+  var circuits=[];
+  TR.forEach(function(pts,i){
+    var path=new THREE.CurvePath();
+    for(var k=0;k<pts.length-1;k++)path.add(new THREE.LineCurve3(P(pts[k][0],pts[k][1],-.6),P(pts[k+1][0],pts[k+1][1],-.6)));
+    root.add(new THREE.Mesh(new THREE.TubeGeometry(path,pts.length*24,.42,10,false),trMat));
+    var e=pts[pts.length-1],via=new THREE.Mesh(new THREE.TorusGeometry(1.15,.38,10,28),viaMat);via.position.copy(P(e[0],e[1],-.6));root.add(via);
+    var sp=new THREE.Mesh(new THREE.SphereGeometry(.62,12,10),sparkMat);root.add(sp);circuits.push({m:sp,c:path,off:i*.17,sp:.4+(i%3)*.12});
+  });
   var pmat=new THREE.MeshBasicMaterial({color:new THREE.Color(2.2,1.7,1.4)}),pulses=[];
   faces.forEach(function(f){f.cs.forEach(function(c,i){var m=new THREE.Mesh(new THREE.SphereGeometry(1.05,16,12),pmat);f.g.add(m);pulses.push({m:m,c:c,off:i*.33})})});
   scene.add(new THREE.AmbientLight(0xffffff,.3));var rim=new THREE.DirectionalLight(0xffffff,1.1);rim.position.set(-70,40,-80);scene.add(rim);var rim2=new THREE.DirectionalLight(0xff8a5c,.9);rim2.position.set(80,-30,-60);scene.add(rim2);
@@ -1206,6 +1220,7 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
       for(var i=0;i<letters.length;i++)letters[i].style.setProperty('--f',(Math.sin(t*2.2-i*.55)*3*Math.abs(cy)).toFixed(2)+'px');
     }
     pulses.forEach(function(p){var u=(t*.35+p.off)%1;p.m.position.copy(p.c.getPointAt(u));p.m.scale.setScalar(u>.9?(1-u)/.1:1)});
+    circuits.forEach(function(c){var u=(t*c.sp+c.off)%1;c.m.position.copy(c.c.getPointAt(1-u));c.m.scale.setScalar(u<.12?u/.12:u>.9?(1-u)/.1:1)});
     renderer.render(scene,camera);
   }
   stage.classList.add('ready');frame();
