@@ -1,0 +1,21 @@
+[build]
+  publish = "."
+
+# nelomux.com es el dominio principal; www redirige a él
+[[redirects]]
+  from = "https://www.nelomux.com/*"
+  to = "https://nelomux.com/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
