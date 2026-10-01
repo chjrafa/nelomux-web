@@ -35,7 +35,12 @@
       headers: { apikey: C.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + C.SUPABASE_ANON_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify(d)
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) {
+      let info = '';
+      try { const j = await r.json(); info = j.code || j.message || '' } catch (e) {}
+      console.error('Nelomux CRM: Supabase respondió', r.status, info);
+      throw new Error(r.status + (info ? ' · ' + info : ''));
+    }
   }
 
   function bind(form, opts) {
@@ -55,13 +60,14 @@
       if (d.nombre.length < 2) { say(t.req, 'err'); form.nombre && form.nombre.focus(); return }
       if (!d.email && !d.whatsapp) { say(t.contact, 'err'); (form.whatsapp || form.email).focus(); return }
       if (d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { say(t.mail, 'err'); form.email.focus(); return }
-      if (Date.now() - t0 < 2500) return; // envíos instantáneos = bots
+      const wait = 2500 - (Date.now() - t0); // envíos instantáneos = bots: esperamos en vez de ignorar en silencio
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
       const link = waLink(d, lang);
       if (waBtn) waBtn.href = link;
       if (!configured()) { window.open(link, '_blank', 'noopener'); say(t.wa, 'ok'); form.classList.add('sent'); if (waBtn) waBtn.hidden = false; return }
       btn && (btn.disabled = true); say(t.sending, '');
       try { await save(d); say(t.ok, 'ok'); form.classList.add('sent'); form.reset() }
-      catch (err) { say(t.fail, 'err'); if (waBtn) waBtn.hidden = false }
+      catch (err) { say(t.fail + ' (' + (err && err.message || 'red') + ')', 'err'); if (waBtn) waBtn.hidden = false }
       finally { btn && (btn.disabled = false) }
     });
   }
