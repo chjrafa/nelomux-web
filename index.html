@@ -464,6 +464,30 @@ footer.site nav{display:block}
 .hero h1{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 18px 36px rgba(0,0,0,.55)}
 .hero h1 em{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #9c330c,3px 3px 0 #6e2206,4px 4px 0 #4a1604,0 0 30px rgba(255,91,31,.35),0 18px 36px rgba(0,0,0,.5)}
 .cform h3{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #1d2027,0 8px 18px rgba(0,0,0,.5)}
+
+/* ===== Todo el sitio en oscuro: los tokens claros pasan a valores oscuros y cada sección lleva sus líneas ===== */
+:root{--surface:#14161b;--raised:rgba(29,32,40,.42);--line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);--ink:#eef0f4;--muted:#a2a8b4;--faint:#7d8492;
+  --brand-ink:#ff9468;--brand-tint:rgba(255,91,31,.14);--ok:#6fd49a;--ok-tint:rgba(79,208,140,.14);--shadow:0 1px 2px rgba(0,0,0,.4),0 18px 40px -22px rgba(0,0,0,.8);color-scheme:dark}
+body{background:var(--tile);color:var(--paper-dk)}
+.bgflows{display:none}
+section.block:not(.dark)[id]{border-top:1px solid rgba(255,255,255,.06)}
+.card{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 50px -30px rgba(0,0,0,.8);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.sec-head h2,.tenet h3,.step h3,.sol h3{color:#fff}
+.sec-head h2{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #1d2027,4px 4px 0 #111318,0 16px 34px rgba(0,0,0,.6)}
+.stat b{text-shadow:1px 1px 0 #3b3f48,2px 2px 0 #2b2f37,3px 3px 0 #15171c,0 10px 22px rgba(0,0,0,.55)}
+.kpi b{text-shadow:1px 1px 0 #c7430f,2px 2px 0 #6e2206,0 8px 18px rgba(0,0,0,.5)}
+.sol h3,.step h3,.tenet h3{text-shadow:1px 1px 0 #2b2f37,2px 2px 0 #15171c,0 6px 14px rgba(0,0,0,.5)}
+.kick::before{filter:brightness(1.6)}
+.filters button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.filters button[aria-pressed="true"] span{color:var(--on-brand)}
+.btn.dark{background:#eef0f4;color:#14161b}
+.fstep .n{background:#1b1e26}
+.case-ctrl button svg{fill:#eef0f4}
+.sectors{background:rgba(29,32,40,.35);border-color:rgba(255,255,255,.07)}
+.tab[aria-selected="true"],.tab:hover{background:rgba(255,255,255,.04)}
+.pill{background:rgba(255,255,255,.05)}
+.kpi{background:rgba(255,91,31,.12)}
+.kpi span{color:var(--paper-dk)}
 </style>
 </head>
 <body>
@@ -521,7 +545,7 @@ footer.site nav{display:block}
   </div>
 </header>
 
-<div class="sectors">
+<div class="sectors" data-net="0.5,0.5">
   <div class="wrap">
     <span class="label" data-en="Industries we work with">Sectores donde trabajamos</span>
     <ul>
@@ -535,7 +559,7 @@ footer.site nav{display:block}
 </div>
 
 <main>
-<section class="block" id="soluciones">
+<section class="block" id="soluciones" data-net="0.82,0.18">
   <div class="wrap">
     <div class="sec-head rise">
       <div>
@@ -572,7 +596,7 @@ footer.site nav{display:block}
   </div>
 </section>
 
-<section class="block" id="casos" style="padding-top:0">
+<section class="block" id="casos" style="padding-top:0" data-net="0.15,0.5">
   <div class="wrap">
     <div class="sec-head rise">
       <div>
@@ -588,7 +612,7 @@ footer.site nav{display:block}
   </div>
 </section>
 
-<section class="block" style="padding-top:0">
+<section class="block" style="padding-top:0" data-net="0.7,0.5">
   <div class="wrap">
     <div class="stats card rise">
       <div class="stat"><em data-en="Engineering">Ingeniería</em><b data-count="553">553</b><span data-en="unit prices in a live catalog">precios unitarios en un catálogo vivo</span></div>
@@ -623,7 +647,7 @@ footer.site nav{display:block}
   </div>
 </section>
 
-<section class="block" id="proceso">
+<section class="block" id="proceso" data-net="0.78,0.3">
   <div class="wrap">
     <div class="sec-head rise">
       <div>
@@ -641,7 +665,7 @@ footer.site nav{display:block}
   </div>
 </section>
 
-<section class="block" style="padding-top:0">
+<section class="block" style="padding-top:0" data-net="0.25,0.5">
   <div class="wrap">
     <div class="sec-head rise">
       <div>
@@ -699,7 +723,6 @@ footer.site nav{display:block}
     <div class="legal"><span><b>Nelomux</b> · <span data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</span></span><span>info@nelomux.com · © 2026</span></div>
   </div>
 </footer>
-<a class="wa-float" id="wa-float" href="https://wa.me/584246759019" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z" fill="#ff5b1f"/><path d="M8.6 7.6c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.6.7c-.1.1-.2.3 0 .5.5.9 1.4 1.9 2.6 2.5.2.1.4.1.5 0l.8-.9c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.4 0 .6-.3 1.4-.9 1.7-.6.4-1.5.5-2.6.1-1.9-.7-3.6-2.2-4.6-4-.6-1.1-.6-2.2-.2-2.9z" fill="#14161b"/></svg><span data-en="Chat on WhatsApp">Escríbenos</span></a>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -839,13 +862,6 @@ if('IntersectionObserver' in window)new IntersectionObserver(function(es){if(es[
   if(REDUCE)mux.querySelectorAll('animateMotion').forEach(function(a){a.parentNode.remove()});
 })();
 
-/* ---------- WhatsApp flotante ---------- */
-(function(){
-  var f=document.getElementById('wa-float'),c=document.getElementById('contacto'),inC=false;
-  function upd(){f.classList.toggle('hide',inC||scrollY<420)}
-  addEventListener('scroll',upd,{passive:true});upd();
-  if('IntersectionObserver' in window)new IntersectionObserver(function(es){inC=es[0].isIntersecting;upd()},{threshold:.2}).observe(c);
-})();
 
 /* ---------- Idioma ---------- */
 (function(){
