@@ -1150,33 +1150,40 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
   var g=new THREE.ExtrudeGeometry(s,{depth:D,bevelEnabled:true,bevelThickness:bev,bevelSize:1,bevelSegments:8,curveSegments:40});g.translate(0,0,-D/2);
   var tileMat=new THREE.MeshPhysicalMaterial({color:lin(0x1a1d24),roughness:.34,metalness:.3,clearcoat:.9,clearcoatRoughness:.2,envMapIntensity:1.1});
   var volt=lin(0xff5b1f);
-  var wire=new THREE.MeshPhysicalMaterial({color:volt,emissive:volt,emissiveIntensity:.4,roughness:.3,metalness:.1,clearcoat:1,clearcoatRoughness:.1});
+  // Circuitos dentro del logo: pistas con codos de 45° y puntos de soldadura impresos en los tubos y las esferas.
+  // La textura de color da el surco; la de emisión hace que las pistas brillen por dentro y la corriente avance hacia la esfera grande.
+  function circuitTex(){
+    var W=512,H=256,a=document.createElement('canvas'),e=document.createElement('canvas');a.width=e.width=W;a.height=e.height=H;
+    var x=a.getContext('2d'),y=e.getContext('2d'),seed=7,R=function(){seed=(seed*16807)%2147483647;return seed/2147483647};
+    x.fillStyle='#ff5b1f';x.fillRect(0,0,W,H);y.fillStyle='#2a0d03';y.fillRect(0,0,W,H);
+    var G=16,dirs=[[1,0],[0,1],[0,-1],[1,1],[1,-1]];
+    for(var n=0;n<22;n++){
+      var cx=Math.floor(R()*W/G)*G,cy=Math.floor(R()*H/G)*G+G/2,pts=[[cx,cy]],d=dirs[0];
+      for(var k=0;k<4+Math.floor(R()*4);k++){if(R()<.55)d=dirs[Math.floor(R()*dirs.length)];var L=G*(1+Math.floor(R()*4));cx+=d[0]*L;cy=Math.max(6,Math.min(H-6,cy+d[1]*L));pts.push([cx,cy])}
+      [[x,'#a8380c',8],[x,'#7a2606',4],[x,'#ffc4a6',2],[y,'#ffe2d2',5]].forEach(function(st){var c=st[0];c.strokeStyle=st[1];c.lineWidth=st[2];c.lineJoin='round';c.lineCap='round';c.beginPath();
+        pts.forEach(function(p,i){i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])});c.stroke()});
+      [pts[0],pts[pts.length-1]].forEach(function(p){x.fillStyle='#7a2606';x.beginPath();x.arc(p[0],p[1],9,0,Math.PI*2);x.fill();x.fillStyle='#ffd2bd';x.beginPath();x.arc(p[0],p[1],5,0,Math.PI*2);x.fill();x.fillStyle='#a8380c';x.beginPath();x.arc(p[0],p[1],2,0,Math.PI*2);x.fill();
+        y.fillStyle='#fff1e8';y.beginPath();y.arc(p[0],p[1],7,0,Math.PI*2);y.fill()});
+    }
+    var tm=new THREE.CanvasTexture(a),te=new THREE.CanvasTexture(e);
+    [tm,te].forEach(function(t){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())});
+    return {map:tm,em:te};
+  }
+  function wireMat(rx,ry){var tx=circuitTex();tx.map.repeat.set(rx,ry);tx.em.repeat.set(rx,ry);
+    return new THREE.MeshPhysicalMaterial({color:0xffffff,map:tx.map,emissive:new THREE.Color(1.2,.8,.6),emissiveMap:tx.em,emissiveIntensity:1,roughness:.32,metalness:.1,clearcoat:1,clearcoatRoughness:.12})}
+  var wireT=wireMat(2,1),wireS=wireMat(1.5,1),wire=wireT;
   var FZ=D/2+bev+.9;
   function side(z,flip){
     var gr=new THREE.Group(),top=new THREE.CurvePath(),mid=new THREE.CurvePath(),bot=new THREE.CurvePath();
     top.add(new THREE.LineCurve3(P(10,14,z),P(15,14,z)));top.add(new THREE.CubicBezierCurve3(P(15,14,z),P(22.5,14,z),P(23,24,z),P(30,24,z)));top.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
     mid.add(new THREE.LineCurve3(P(10,24,z),P(37,24,z)));
     bot.add(new THREE.LineCurve3(P(10,34,z),P(15,34,z)));bot.add(new THREE.CubicBezierCurve3(P(15,34,z),P(22.5,34,z),P(23,24,z),P(30,24,z)));bot.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
-    var cs=[top,mid,bot];cs.forEach(function(c){gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.7,24,false),wire))});
-    [14,24,34].forEach(function(y){var m=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,24),wire);m.position.copy(P(10,y,z));gr.add(m)});
-    var o=new THREE.Mesh(new THREE.SphereGeometry(4.6,40,30),wire);o.position.copy(P(37,24,z));gr.add(o);
+    var cs=[top,mid,bot];cs.forEach(function(c){gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.7,24,false),wireT))});
+    [14,24,34].forEach(function(y){var m=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,24),wireS);m.position.copy(P(10,y,z));gr.add(m)});
+    var o=new THREE.Mesh(new THREE.SphereGeometry(4.6,40,30),wireS);o.position.copy(P(37,24,z));gr.add(o);
     if(flip)gr.rotation.y=Math.PI;root.add(gr);return {g:gr,cs:cs};
   }
   var faces=[side(0,false)];root.scale.setScalar(1.3);root.position.x=-1.5;
-  // Circuitos que salen del símbolo y giran con él: pistas con codos de 45°, anillos de soldadura y cargas que corren hacia el logo
-  var trMat=new THREE.MeshStandardMaterial({color:lin(0xc7430f),emissive:lin(0xff5b1f),emissiveIntensity:.28,roughness:.42,metalness:.5});
-  var viaMat=new THREE.MeshStandardMaterial({color:lin(0xff8a5c),emissive:lin(0xff5b1f),emissiveIntensity:.4,roughness:.3,metalness:.6});
-  var sparkMat=new THREE.MeshBasicMaterial({color:new THREE.Color(2.4,1.1,.45)});
-  var TR=[[[10,14],[5,14],[3,12],[3,7]],[[10,24],[2.5,24]],[[10,34],[5,34],[3,36],[3,41]],[[15,14],[15,9],[18,6.5],[28,6.5]],[[15,34],[15,39],[18,41.5],[28,41.5]],
-          [[40,21],[43.5,17.5],[43.5,11]],[[40,27],[43.5,30.5],[43.5,37]],[[41.6,24],[46,24]],[[28,6.5],[32,6.5],[35,9.5],[35,12]],[[28,41.5],[32,41.5],[35,38.5],[35,36]]];
-  var circuits=[];
-  TR.forEach(function(pts,i){
-    var path=new THREE.CurvePath();
-    for(var k=0;k<pts.length-1;k++)path.add(new THREE.LineCurve3(P(pts[k][0],pts[k][1],-.6),P(pts[k+1][0],pts[k+1][1],-.6)));
-    root.add(new THREE.Mesh(new THREE.TubeGeometry(path,pts.length*24,.42,10,false),trMat));
-    var e=pts[pts.length-1],via=new THREE.Mesh(new THREE.TorusGeometry(1.15,.38,10,28),viaMat);via.position.copy(P(e[0],e[1],-.6));root.add(via);
-    var sp=new THREE.Mesh(new THREE.SphereGeometry(.62,12,10),sparkMat);root.add(sp);circuits.push({m:sp,c:path,off:i*.17,sp:.4+(i%3)*.12});
-  });
   var pmat=new THREE.MeshBasicMaterial({color:new THREE.Color(2.2,1.7,1.4)}),pulses=[];
   faces.forEach(function(f){f.cs.forEach(function(c,i){var m=new THREE.Mesh(new THREE.SphereGeometry(1.05,16,12),pmat);f.g.add(m);pulses.push({m:m,c:c,off:i*.33})})});
   scene.add(new THREE.AmbientLight(0xffffff,.3));var rim=new THREE.DirectionalLight(0xffffff,1.1);rim.position.set(-70,40,-80);scene.add(rim);var rim2=new THREE.DirectionalLight(0xff8a5c,.9);rim2.position.set(80,-30,-60);scene.add(rim2);
@@ -1220,7 +1227,7 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
       for(var i=0;i<letters.length;i++)letters[i].style.setProperty('--f',(Math.sin(t*2.2-i*.55)*3*Math.abs(cy)).toFixed(2)+'px');
     }
     pulses.forEach(function(p){var u=(t*.35+p.off)%1;p.m.position.copy(p.c.getPointAt(u));p.m.scale.setScalar(u>.9?(1-u)/.1:1)});
-    circuits.forEach(function(c){var u=(t*c.sp+c.off)%1;c.m.position.copy(c.c.getPointAt(1-u));c.m.scale.setScalar(u<.12?u/.12:u>.9?(1-u)/.1:1)});
+    if(!REDUCE){wireT.map.offset.x-=dt*.12;wireS.map.offset.x-=dt*.05;var gl=.85+.25*Math.sin(t*2.4);wireT.emissiveIntensity=gl;wireS.emissiveIntensity=gl}
     renderer.render(scene,camera);
   }
   stage.classList.add('ready');frame();
