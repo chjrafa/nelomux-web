@@ -135,7 +135,7 @@ td .sub{color:var(--muted);font-size:13px}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="mk" viewBox="0 0 48 48"><path d="M10 14H15C22.5 14 23 24 30 24M10 24H30M10 34H15C22.5 34 23 24 30 24M30 24H34" fill="none" stroke="#FF5B1F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="14" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="24" r="2.6" fill="#FF5B1F"/><circle cx="10" cy="34" r="2.6" fill="#FF5B1F"/><circle cx="37" cy="24" r="4.6" fill="#FF5B1F"/></symbol></defs></svg>
 
 <!-- Configuración pendiente -->
-<div class="gate" id="setup" hidden><div class="box">
+<div class="gate" id="setup" data-net="0.5,0.25" hidden><div class="box">
   <div class="logo"><svg viewBox="4 4 40 40"><use href="#mk"/></svg><span class="wm">NELO<b>MUX</b></span></div>
   <h1>Conecta el CRM</h1>
   <p>Falta conectar la base de datos. Son 5 minutos, una sola vez:</p>
@@ -149,7 +149,7 @@ td .sub{color:var(--muted);font-size:13px}
 </div></div>
 
 <!-- Acceso -->
-<form class="gate" id="login" hidden><div class="box">
+<form class="gate" id="login" data-net="0.5,0.25" hidden><div class="box">
   <div class="logo"><svg viewBox="4 4 40 40"><use href="#mk"/></svg><span class="wm">NELO<b>MUX</b></span></div>
   <h1>CRM</h1>
   <p>Entra con tu usuario de Supabase.</p>
@@ -189,6 +189,7 @@ td .sub{color:var(--muted);font-size:13px}
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="../config.js"></script>
+<script src="../red.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script>
 (function(){
