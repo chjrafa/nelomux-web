@@ -432,7 +432,7 @@ footer.site nav{display:block}
 @media (max-width:560px){.cgrid{grid-template-columns:1fr}}
 
 /* El botón principal se ilumina cuando llega un pulso por las líneas del héroe */
-.hero .ctas .btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 0 #b5390b,0 12px 26px -10px rgba(255,91,31,.75),0 0 0 calc(var(--g,0) * 7px) rgba(255,91,31,calc(var(--g,0) * .28)),0 0 calc(var(--g,0) * 34px) rgba(255,91,31,calc(var(--g,0) * .55))}
+.hero .ctas .btn.primary{transition:transform .2s,background .2s;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 0 #b5390b,0 12px 26px -10px rgba(255,91,31,.75),0 0 0 calc(var(--g,0) * 7px) rgba(255,91,31,calc(var(--g,0) * .28)),0 0 calc(var(--g,0) * 34px) rgba(255,91,31,calc(var(--g,0) * .55))}
 
 /* Contacto: bandeja y filas translúcidas para que se vean las líneas de fondo */
 .contact .cform{background:rgba(29,32,40,.42);border-color:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
@@ -920,7 +920,7 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
   var cv=document.createElement('canvas');cv.className='flows';cv.setAttribute('aria-hidden','true');hero.insertBefore(cv,hero.firstChild);
   var ctx=cv.getContext('2d');if(!ctx)return;
   var W=0,H=0,cx=0,cy=0,k=1,sh=0,dpr=1,streams=[],outs=[];
-  var cta=hero.querySelector('.ctas .btn.primary'),bx=0,by=0,bw=0;
+  var cta=hero.querySelector('.ctas .btn.primary'),bx=0,by=0,bw=0,ctaG=0;
   // Geometría del símbolo en unidades del 3D (retícula de 48, escala 1.3, desplazado -1.5)
   var IN_X=-19.7,OUT_X=15.4,ROWS=[13,0,-13],UNITS=68.6;
   function rnd(i){var x=Math.sin(i*127.1+11.7)*43758.5453;return x-Math.floor(x)}
@@ -995,13 +995,13 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
         ctx.strokeStyle=li===1?'rgba(255,91,31,.42)':'rgba(238,240,244,.08)';ctx.lineWidth=li===1?1.6:1;ctx.stroke();
         ctx.beginPath();ctx.arc(x3,y3,li===1?3.2:2.2,0,Math.PI*2);ctx.fillStyle='#14161b';ctx.fill();ctx.lineWidth=1.3;ctx.strokeStyle=li===1?'rgba(255,91,31,.8)':'rgba(238,240,244,.3)';ctx.stroke();
         if(!REDUCE)for(var pi=0;pi<2;pi++){
-          var u=(t*.32+li*.21+pi*.5)%1,px=bez(P[0],P[2],P[4],P[6],u),py=bez(P[1],P[3],P[5],P[7],u),al=Math.sin(u*Math.PI*.98+.05);
+          var u=(t*.14+li*.21+pi*.5)%1,px=bez(P[0],P[2],P[4],P[6],u),py=bez(P[1],P[3],P[5],P[7],u),al=Math.sin(u*Math.PI*.98+.05);
           ctx.beginPath();ctx.arc(px,py,li===1?2.4:1.5,0,Math.PI*2);ctx.fillStyle=li===1?'rgba(255,170,130,'+(.9*al).toFixed(3)+')':'rgba(255,140,90,'+(.5*al).toFixed(3)+')';
           ctx.shadowColor='rgba(255,91,31,.9)';ctx.shadowBlur=li===1?12:6;ctx.fill();ctx.shadowBlur=0;
-          if(u>.88)glow=Math.max(glow,(u-.88)/.12);
+          if(li===1&&u>.8)glow=Math.max(glow,Math.sin((u-.8)/.2*Math.PI*.5));
         }
       }
-      ctx.restore();cta.style.setProperty('--g',glow.toFixed(3));
+      ctx.restore();ctaG+=(glow-ctaG)*(glow>ctaG?.08:.025);cta.style.setProperty('--g',ctaG.toFixed(3));
     }
     // Directrices
     ctx.save();ctx.setLineDash([2,7]);ctx.lineWidth=1;ctx.strokeStyle='rgba(238,240,244,.07)';
@@ -1150,37 +1150,39 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
   var g=new THREE.ExtrudeGeometry(s,{depth:D,bevelEnabled:true,bevelThickness:bev,bevelSize:1,bevelSegments:8,curveSegments:40});g.translate(0,0,-D/2);
   var tileMat=new THREE.MeshPhysicalMaterial({color:lin(0x1a1d24),roughness:.34,metalness:.3,clearcoat:.9,clearcoatRoughness:.2,envMapIntensity:1.1});
   var volt=lin(0xff5b1f);
-  // Circuitos dentro del logo: pistas con codos de 45° y puntos de soldadura impresos en los tubos y las esferas.
-  // La textura de color da el surco; la de emisión hace que las pistas brillen por dentro y la corriente avance hacia la esfera grande.
-  function circuitTex(){
-    var W=512,H=256,a=document.createElement('canvas'),e=document.createElement('canvas');a.width=e.width=W;a.height=e.height=H;
-    var x=a.getContext('2d'),y=e.getContext('2d'),seed=7,R=function(){seed=(seed*16807)%2147483647;return seed/2147483647};
-    x.fillStyle='#ff5b1f';x.fillRect(0,0,W,H);y.fillStyle='#2a0d03';y.fillRect(0,0,W,H);
-    var G=16,dirs=[[1,0],[0,1],[0,-1],[1,1],[1,-1]];
-    for(var n=0;n<22;n++){
+  // Circuitos dentro del logo, en dos capas que se mueven en sentidos opuestos:
+  // abajo pistas grafito impresas en el naranja; encima pistas doradas que brillan.
+  function circuitTex(seed,mode){
+    var W=512,H=256,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d');
+    var R=function(){seed=(seed*16807)%2147483647;return seed/2147483647};
+    if(mode==='body'){x.fillStyle='#ff5b1f';x.fillRect(0,0,W,H)}else x.clearRect(0,0,W,H);
+    var G=16,dirs=[[1,0],[0,1],[0,-1],[1,1],[1,-1]],N=mode==='body'?22:14;
+    for(var n=0;n<N;n++){
       var cx=Math.floor(R()*W/G)*G,cy=Math.floor(R()*H/G)*G+G/2,pts=[[cx,cy]],d=dirs[0];
-      for(var k=0;k<4+Math.floor(R()*4);k++){if(R()<.55)d=dirs[Math.floor(R()*dirs.length)];var L=G*(1+Math.floor(R()*4));cx+=d[0]*L;cy=Math.max(6,Math.min(H-6,cy+d[1]*L));pts.push([cx,cy])}
-      [[x,'#a8380c',8],[x,'#7a2606',4],[x,'#ffc4a6',2],[y,'#ffe2d2',5]].forEach(function(st){var c=st[0];c.strokeStyle=st[1];c.lineWidth=st[2];c.lineJoin='round';c.lineCap='round';c.beginPath();
-        pts.forEach(function(p,i){i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])});c.stroke()});
-      [pts[0],pts[pts.length-1]].forEach(function(p){x.fillStyle='#7a2606';x.beginPath();x.arc(p[0],p[1],9,0,Math.PI*2);x.fill();x.fillStyle='#ffd2bd';x.beginPath();x.arc(p[0],p[1],5,0,Math.PI*2);x.fill();x.fillStyle='#a8380c';x.beginPath();x.arc(p[0],p[1],2,0,Math.PI*2);x.fill();
-        y.fillStyle='#fff1e8';y.beginPath();y.arc(p[0],p[1],7,0,Math.PI*2);y.fill()});
+      for(var k=0;k<4+Math.floor(R()*4);k++){if(R()<.55)d=dirs[Math.floor(R()*dirs.length)];var L=G*(1+Math.floor(R()*4));cx+=d[0]*L;cy=Math.max(8,Math.min(H-8,cy+d[1]*L));pts.push([cx,cy])}
+      var strokes=mode==='body'?[['#7a2606',7],['#1b1d22',3]]:[['#ffc24a',3]];
+      strokes.forEach(function(st){x.strokeStyle=st[0];x.lineWidth=st[1];x.lineJoin='round';x.lineCap='round';if(mode!=='body'){x.shadowColor='#ffb000';x.shadowBlur=8}
+        x.beginPath();pts.forEach(function(p,i){i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])});x.stroke();x.shadowBlur=0});
+      [pts[0],pts[pts.length-1]].forEach(function(p){
+        if(mode==='body'){x.fillStyle='#1b1d22';x.beginPath();x.arc(p[0],p[1],8,0,Math.PI*2);x.fill();x.fillStyle='#ff8a4f';x.beginPath();x.arc(p[0],p[1],3.2,0,Math.PI*2);x.fill()}
+        else{x.fillStyle='#ffe08a';x.shadowColor='#ffb000';x.shadowBlur=10;x.beginPath();x.arc(p[0],p[1],5,0,Math.PI*2);x.fill();x.shadowBlur=0}});
     }
-    var tm=new THREE.CanvasTexture(a),te=new THREE.CanvasTexture(e);
-    [tm,te].forEach(function(t){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())});
-    return {map:tm,em:te};
+    var t=new THREE.CanvasTexture(cv);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t;
   }
-  function wireMat(rx,ry){var tx=circuitTex();tx.map.repeat.set(rx,ry);tx.em.repeat.set(rx,ry);
-    return new THREE.MeshPhysicalMaterial({color:0xffffff,map:tx.map,emissive:new THREE.Color(1.2,.8,.6),emissiveMap:tx.em,emissiveIntensity:1,roughness:.32,metalness:.1,clearcoat:1,clearcoatRoughness:.12})}
-  var wireT=wireMat(2,1),wireS=wireMat(1.5,1),wire=wireT;
+  function bodyMat(rx,ry,seed){var m=circuitTex(seed,'body');m.repeat.set(rx,ry);
+    return new THREE.MeshPhysicalMaterial({color:0xffffff,map:m,emissive:volt,emissiveIntensity:.32,roughness:.32,metalness:.1,clearcoat:1,clearcoatRoughness:.12})}
+  function glowMat(rx,ry,seed){var m=circuitTex(seed,'glow');m.repeat.set(rx,ry);
+    return new THREE.MeshBasicMaterial({map:m,color:new THREE.Color(1.5,1.15,.55),transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false})}
+  var wireT=bodyMat(2,1,7),wireS=bodyMat(1.5,1,11),glowT=glowMat(2.4,1,29),glowS=glowMat(1.8,1,41),wire=wireT;
   var FZ=D/2+bev+.9;
   function side(z,flip){
     var gr=new THREE.Group(),top=new THREE.CurvePath(),mid=new THREE.CurvePath(),bot=new THREE.CurvePath();
     top.add(new THREE.LineCurve3(P(10,14,z),P(15,14,z)));top.add(new THREE.CubicBezierCurve3(P(15,14,z),P(22.5,14,z),P(23,24,z),P(30,24,z)));top.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
     mid.add(new THREE.LineCurve3(P(10,24,z),P(37,24,z)));
     bot.add(new THREE.LineCurve3(P(10,34,z),P(15,34,z)));bot.add(new THREE.CubicBezierCurve3(P(15,34,z),P(22.5,34,z),P(23,24,z),P(30,24,z)));bot.add(new THREE.LineCurve3(P(30,24,z),P(37,24,z)));
-    var cs=[top,mid,bot];cs.forEach(function(c){gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.7,24,false),wireT))});
-    [14,24,34].forEach(function(y){var m=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,24),wireS);m.position.copy(P(10,y,z));gr.add(m)});
-    var o=new THREE.Mesh(new THREE.SphereGeometry(4.6,40,30),wireS);o.position.copy(P(37,24,z));gr.add(o);
+    var cs=[top,mid,bot];cs.forEach(function(c){gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.7,24,false),wireT));gr.add(new THREE.Mesh(new THREE.TubeGeometry(c,160,1.76,24,false),glowT))});
+    [14,24,34].forEach(function(y){var m=new THREE.Mesh(new THREE.SphereGeometry(2.9,32,24),wireS);m.position.copy(P(10,y,z));gr.add(m);var mg=new THREE.Mesh(new THREE.SphereGeometry(2.97,32,24),glowS);mg.position.copy(P(10,y,z));gr.add(mg)});
+    var o=new THREE.Mesh(new THREE.SphereGeometry(4.6,40,30),wireS);o.position.copy(P(37,24,z));gr.add(o);var og=new THREE.Mesh(new THREE.SphereGeometry(4.68,40,30),glowS);og.position.copy(P(37,24,z));gr.add(og);
     if(flip)gr.rotation.y=Math.PI;root.add(gr);return {g:gr,cs:cs};
   }
   var faces=[side(0,false)];root.scale.setScalar(1.3);root.position.x=-1.5;
@@ -1227,7 +1229,7 @@ document.querySelectorAll('[data-copy]').forEach(function(b){
       for(var i=0;i<letters.length;i++)letters[i].style.setProperty('--f',(Math.sin(t*2.2-i*.55)*3*Math.abs(cy)).toFixed(2)+'px');
     }
     pulses.forEach(function(p){var u=(t*.35+p.off)%1;p.m.position.copy(p.c.getPointAt(u));p.m.scale.setScalar(u>.9?(1-u)/.1:1)});
-    if(!REDUCE){wireT.map.offset.x-=dt*.12;wireS.map.offset.x-=dt*.05;var gl=.85+.25*Math.sin(t*2.4);wireT.emissiveIntensity=gl;wireS.emissiveIntensity=gl}
+    if(!REDUCE){wireT.map.offset.x+=dt*.035;wireS.map.offset.x+=dt*.02;glowT.map.offset.x-=dt*.16;glowS.map.offset.x-=dt*.09;var gl=.72+.25*Math.sin(t*1.8);glowT.opacity=gl;glowS.opacity=gl}
     renderer.render(scene,camera);
   }
   stage.classList.add('ready');frame();
