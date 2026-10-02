@@ -112,6 +112,7 @@ td .sub{color:var(--muted);font-size:13px}
 .drawer .hd p{margin:0;color:var(--muted)}
 .drawer .x{position:absolute;right:14px;top:calc(12px + env(safe-area-inset-top,0px));width:40px;height:40px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer;font-size:20px;line-height:1}
 .drawer .bd{flex:1;overflow-y:auto;padding:18px 20px;display:grid;gap:18px;align-content:start}
+.reply{display:grid;gap:10px}.reply textarea{min-height:130px}.reply .hint{color:var(--muted);font-size:12.5px}
 .drawer .ft{padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .drawer .ft .msg{font-size:13px;color:var(--muted);margin-right:auto}
 .acts{display:flex;flex-wrap:wrap;gap:8px}
@@ -213,6 +214,16 @@ const ST=[
   {k:'nuevo',t:'Nuevo',c:'#7ea6ff'},{k:'contactado',t:'Contactado',c:'#a78bfa'},{k:'demo_agendada',t:'Demo agendada',c:'#f0b44c'},
   {k:'propuesta',t:'Propuesta',c:'#ff9468'},{k:'ganado',t:'Ganado',c:'#4fd08c'},{k:'perdido',t:'Perdido',c:'#6f7684'}];
 const STN=Object.fromEntries(ST.map(s=>[s.k,s]));
+const TPL=[
+  {t:'Link para agendar la demo',x:'¡Hola {nombre}! 👋 Gracias por escribirnos. Aquí tienes el link para agendar tu demo gratis, toma 1 minuto: https://nelomux.com/demo?utm_source=crm#es\n\nAhí nos cuentas qué quieres automatizar y te mostramos cómo se vería en tu negocio 🙌'},
+  {t:'Primer mensaje (llenó el formulario)',x:'Hola {nombre}, soy Rafael de Nelomux 👋 Recibí tu solicitud.\n\nPara preparar la demo a tu medida, 3 preguntas rápidas:\n1. ¿A qué se dedica tu negocio y cuántas personas son?\n2. ¿Qué tarea les quita más tiempo hoy?\n3. ¿Qué usan para eso (Excel, WhatsApp, algún sistema)?\n\nCon eso te propongo dos horarios.'},
+  {t:'Proponer horario de demo',x:'¡Gracias, {nombre}! Te propongo la demo el {día} a las {hora} o el {día} a las {hora}. Es por Google Meet y dura unos 30 minutos. ¿Cuál te queda mejor?'},
+  {t:'Rescate (no respondió)',x:'Hola {nombre}, te escribo de nuevo por si se te pasó el mensaje 🙌 ¿Sigues buscando automatizar algo en {empresa}? Si ahora no es buen momento, dime y te escribo más adelante.'},
+  {t:'Recordatorio de demo',x:'Hola {nombre}, te recuerdo nuestra demo de mañana a las {hora}. Aquí está el link: {link de Meet}'},
+  {t:'Envío de propuesta',x:'Hola {nombre}, como quedamos, aquí está tu propuesta: {link}\n\n¿Te parece si la revisamos juntos el {día} a las {hora}? Así resuelvo cualquier duda en el momento.'},
+  {t:'Seguimiento de propuesta',x:'Hola {nombre}, ¿pudiste ver la propuesta? Si quieres, ajustamos el alcance para empezar por lo que más te urge.'},
+  {t:'Mensaje libre',x:'Hola {nombre}, '}
+];
 const INT={'ventas-crm':'Ventas y CRM','setters':'Setters','whatsapp-instagram':'Bots WA/IG','facturacion':'Facturación','nomina':'Nómina','inventario':'Inventario','reportes':'Reportes','otro':'Otro'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -308,11 +319,15 @@ $('#scrim').addEventListener('click',closeDrawer);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!D.hidden)closeDrawer()});
 async function openDrawer(id){
   const l=leads.find(x=>x.id===id);if(!l)return;openId=id;
-  const wa=digits(l.whatsapp),hi=encodeURIComponent(`Hola ${l.nombre.split(' ')[0]}, te escribo de Nelomux por la demo que pediste.`);
+  const wa=digits(l.whatsapp),first=(l.nombre||'').split(' ')[0];
   D.innerHTML=`<div class="hd"><span class="lab">${esc(STN[l.etapa].t)} · llegó ${esc(fdate(l.created_at))}</span><h2 id="d-name">${esc(l.nombre)}</h2><p>${esc(l.empresa||'Sin empresa')}</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
   <div class="bd">
-    <div class="acts">${wa?`<a class="btn primary" href="https://wa.me/${wa}?text=${hi}" target="_blank" rel="noopener">WhatsApp</a><a class="btn" href="tel:+${wa}">Llamar</a>`:''}${l.instagram?`<a class="btn${wa?'':' primary'}" href="https://ig.me/m/${encodeURIComponent(l.instagram)}" target="_blank" rel="noopener">Instagram</a>`:''}${l.email?`<a class="btn" href="mailto:${esc(l.email)}">Correo</a>`:''}</div>
-    <dl class="kv"><dt>WhatsApp</dt><dd>${esc(l.whatsapp||'—')}</dd><dt>Instagram</dt><dd>${esc(l.instagram?'@'+l.instagram:'—')}</dd><dt>Correo</dt><dd>${esc(l.email||'—')}</dd><dt>Equipo</dt><dd>${esc(l.equipo?l.equipo+' personas':'—')}</dd>
+    <div class="box reply"><span class="lab">Responder</span>
+      <select id="d-tpl" aria-label="Plantilla de mensaje">${TPL.map((t,i)=>`<option value="${i}">${esc(t.t)}</option>`).join('')}</select>
+      <textarea id="d-rtext" maxlength="2000" rows="6" aria-label="Mensaje"></textarea>
+      <div class="acts">${wa?`<button class="btn primary" type="button" data-send="whatsapp">Enviar por WhatsApp</button>`:''}${l.instagram?`<button class="btn${wa?'':' primary'}" type="button" data-send="instagram">Copiar y abrir Instagram</button>`:''}${l.email?`<button class="btn" type="button" data-send="email">Enviar por correo</button>`:''}${wa?`<a class="btn" href="tel:+${wa}">Llamar</a>`:''}${!wa&&!l.instagram&&!l.email?'<small>Este contacto no tiene WhatsApp, Instagram ni correo.</small>':''}</div>
+      <small class="hint">Se abre la app con el mensaje listo: solo tocas enviar. Queda anotado en el historial.</small>
+    </div>    <dl class="kv"><dt>WhatsApp</dt><dd>${esc(l.whatsapp||'—')}</dd><dt>Instagram</dt><dd>${esc(l.instagram?'@'+l.instagram:'—')}</dd><dt>Correo</dt><dd>${esc(l.email||'—')}</dd><dt>Equipo</dt><dd>${esc(l.equipo?l.equipo+' personas':'—')}</dd>
       <dt>Interés</dt><dd>${esc((l.interes||[]).map(i=>INT[i]||i).join(', ')||'—')}</dd><dt>Mensaje</dt><dd style="white-space:pre-wrap">${esc(l.mensaje||'—')}</dd><dt>Origen</dt><dd>${esc(l.origen||'—')}</dd></dl>
     <div class="box">
       <div class="g2"><label class="fld"><span class="lab">Etapa</span><select id="d-st">${ST.map(s=>`<option value="${s.k}"${s.k===l.etapa?' selected':''}>${s.t}</option>`).join('')}</select></label>
@@ -330,6 +345,17 @@ async function openDrawer(id){
   D.hidden=false;$('#scrim').hidden=false;D.querySelector('.x').addEventListener('click',closeDrawer);D.querySelector('.x').focus();
   const loadTl=async()=>{try{const ev=await api.events(id);$('#d-tl').innerHTML=ev.length?ev.map(e=>`<div class="ev ${esc(e.tipo)}"><i></i><div><p>${esc(e.texto)}</p><small>${esc(e.tipo)} · ${esc(fdate(e.created_at))}</small></div></div>`).join(''):'<small>Sin movimientos todavía.</small>'}catch(e){$('#d-tl').innerHTML='<small>No se pudo cargar el historial.</small>'}};
   loadTl();
+  const fill=()=>{const t=TPL[+$('#d-tpl').value];$('#d-rtext').value=t.x.replace(/\{nombre\}/g,first).replace(/\{empresa\}/g,l.empresa||'tu negocio')};
+  $('#d-tpl').value=String(l.instagram&&!wa&&!l.email?0:l.etapa==='nuevo'?1:0);fill();$('#d-tpl').addEventListener('change',fill);
+  D.querySelectorAll('[data-send]').forEach(b=>b.addEventListener('click',async()=>{
+    const ch=b.dataset.send,txt=$('#d-rtext').value.trim();if(!txt){$('#d-rtext').focus();return}
+    if(ch==='whatsapp')window.open(`https://wa.me/${wa}?text=${encodeURIComponent(txt)}`,'_blank','noopener');
+    else if(ch==='email')location.href=`mailto:${l.email}?subject=${encodeURIComponent('Nelomux · tu demo')}&body=${encodeURIComponent(txt)}`;
+    else{let ok=false;try{await navigator.clipboard.writeText(txt);ok=true}catch(e){$('#d-rtext').select()}
+      window.open('https://ig.me/m/'+encodeURIComponent(l.instagram),'_blank','noopener');toast(ok?'Mensaje copiado: pégalo en Instagram':'Copia el mensaje (Cmd + C) y pégalo en Instagram')}
+    try{await api.addEvent(id,ch==='instagram'?'nota':ch,(ch==='instagram'?'Instagram: ':'Enviado: ')+txt.slice(0,3900));loadTl()}catch(e){}
+    if(l.etapa==='nuevo'){try{Object.assign(l,await api.update(id,{etapa:'contactado'}));render();$('#d-st').value='contactado';$('#d-name').previousElementSibling.textContent=STN[l.etapa].t+' · llegó '+fdate(l.created_at);toast('Enviado · movido a Contactado')}catch(e){}}
+  }));
   $('#d-save').addEventListener('click',async()=>{
     const v=$('#d-val').value.trim(),p={etapa:$('#d-st').value,valor:v===''?null:Math.max(0,+v),proximo_paso:$('#d-next').value.trim()||null,proxima_fecha:$('#d-date').value||null};
     $('#d-save').disabled=true;$('#d-msg').textContent='Guardando…';
