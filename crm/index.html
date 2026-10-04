@@ -73,7 +73,9 @@ main{padding:18px clamp(12px,2vw,24px) 40px}
 @keyframes ping{70%{box-shadow:0 0 0 10px rgba(79,208,140,0)}100%{box-shadow:0 0 0 0 rgba(79,208,140,0)}}
 .cxwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px}
 .net{position:relative;background:radial-gradient(circle at 50% 50%,rgba(255,91,31,.10),transparent 60%),var(--panel);border:1px solid var(--line);border-radius:16px;min-height:560px;overflow:hidden}
-.net svg{display:block;width:100%;height:100%}
+.net svg{display:block;width:100%;height:100%;position:relative;z-index:1}
+.net canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.net{background:radial-gradient(ellipse at 50% 50%,#1a1220 0%,#0b0d12 70%)!important}
 .net .link{stroke:var(--line-2);stroke-width:1.5;fill:none}
 .net .flow{stroke:var(--brand);stroke-width:2;fill:none;stroke-dasharray:4 14;opacity:.75;animation:flow 1.6s linear infinite}
 .net .sat{stroke:var(--line);stroke-width:1;stroke-dasharray:2 6}
@@ -497,33 +499,64 @@ function drawNet(){
   const order=['cliente','prospecto','interno'],P=PROJ.slice().sort((a,b)=>order.indexOf(a.tipo)-order.indexOf(b.tipo));
   const avg=PROJ.length?PROJ.reduce((a,p)=>a+(+p.progreso||0),0)/PROJ.length:0,maxV=Math.max(1,...PROJ.map(p=>+p.valor||0));
   const arc=(x,y,r,pct)=>{if(pct<=0)return'';if(pct>=100)return`<circle cx="${x}" cy="${y}" r="${r}"`;const a=pct/100*2*Math.PI-Math.PI/2,x1=x+r*Math.cos(a),y1=y+r*Math.sin(a);return`<path d="M${x},${y-r}A${r},${r} 0 ${pct>50?1:0} 1 ${x1},${y1}"`};
-  let g='',n='';
+  let g='',n='';const GEO={cx,cy,cr:W<520?52:72,W,H,nodes:[],sats:[]};
   open.forEach((l,i)=>{const a=i/open.length*2*Math.PI+.2,rr=R+(W<520?40:62),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
-    g+=`<line class="sat" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;n+=`<circle cx="${x}" cy="${y}" r="4" fill="${STN[l.etapa].c}" opacity=".85"><title>${esc(l.nombre)} · ${esc(STN[l.etapa].t)}</title></circle>`});
+    GEO.sats.push({x,y,c:STN[l.etapa].c});n+=`<circle cx="${x}" cy="${y}" r="3.5" fill="${STN[l.etapa].c}" filter="url(#glow)"><title>${esc(l.nombre)} · ${esc(STN[l.etapa].t)}</title></circle>`});
   P.forEach((p,i)=>{const a=i/P.length*2*Math.PI-Math.PI/2,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a),c=ETP[p.etapa].c,r=(W<520?20:26)+(p.valor?Math.sqrt(p.valor/maxV)*(W<520?8:16):0);
     const activeLink=!['entregado','pausado'].includes(p.etapa);
-    g+=`<line class="link" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>${activeLink?`<line class="flow" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`:''}`;
+    GEO.nodes.push({x,y,r,c,active:activeLink});
     const nar=W<640,lx=nar?x:x+(Math.cos(a)>.3?r+10:Math.cos(a)<-.3?-(r+10):0),ly=nar?y+r+14:y+(Math.abs(Math.cos(a))<=.3?(Math.sin(a)>0?r+20:-(r+12)):5),anc=nar?'middle':Math.cos(a)>.3?'start':Math.cos(a)<-.3?'end':'middle',lim=nar?15:24;
     n+=`<g class="node" tabindex="0" role="button" data-pj="${esc(p.id)}" aria-label="${esc(p.nombre)}, ${p.progreso}% de avance">
       <circle cx="${x}" cy="${y}" r="${r+6}" fill="transparent"/>
-      <circle cx="${x}" cy="${y}" r="${r}" fill="var(--panel-2)"/>
+      <circle cx="${x}" cy="${y}" r="${r+4}" fill="${c}" opacity=".35" filter="url(#halo)"/>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="#0e1016"/>
       <circle class="ring-bg" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="var(--line-2)" stroke-width="4"/>
-      ${arc(x,y,r,p.progreso)} fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      ${arc(x,y,r,p.progreso)} fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
       <text x="${x}" y="${y+5}" text-anchor="middle" font-size="${W<520?11:13}" font-weight="700" fill="var(--ink)">${p.progreso}%</text>
       <text x="${lx}" y="${ly}" text-anchor="${anc}" font-size="${W<520?10.5:12.5}" font-weight="600" fill="var(--ink)">${esc(p.nombre.length>lim?p.nombre.slice(0,lim-1)+'…':p.nombre)}</text></g>`});
   const cr=W<520?52:72;
-  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de proyectos">${g}
-    <circle cx="${cx}" cy="${cy}" r="${cr+18}" fill="rgba(255,91,31,.07)"/>
-    <circle cx="${cx}" cy="${cy}" r="${cr}" fill="var(--bg)" stroke="var(--line-2)" stroke-width="6"/>
-    ${arc(cx,cy,cr,avg)} fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round"/>
+  el.innerHTML=`<canvas aria-hidden="true"></canvas><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de proyectos"><defs><filter id="glow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="halo" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="9"/></filter></defs>${g}
+    <circle cx="${cx}" cy="${cy}" r="${cr+26}" fill="#ff5b1f" opacity=".28" filter="url(#halo)"/>
+    <circle cx="${cx}" cy="${cy}" r="${cr}" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="6"/>
+    ${arc(cx,cy,cr,avg)} fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
     <text x="${cx}" y="${cy-cr*.28}" text-anchor="middle" font-size="${W<520?9:11}" letter-spacing="2" fill="var(--muted)">NELOMUX</text>
     <text x="${cx}" y="${cy+cr*.16}" text-anchor="middle" font-size="${W<520?24:34}" font-weight="700" fill="var(--ink)">${Math.round(avg)}%</text>
     <text x="${cx}" y="${cy+cr*.46}" text-anchor="middle" font-size="${W<520?9:11}" fill="var(--muted)">avance total</text>${n}</svg><div class="tip" hidden></div>`;
+  sky(el.querySelector('canvas'),GEO);
   const tip=el.querySelector('.tip');
   el.querySelectorAll('.node').forEach(nd=>{const p=PROJ.find(x=>x.id===nd.dataset.pj);
     const show=()=>{const b=nd.getBoundingClientRect(),o=el.getBoundingClientRect();tip.innerHTML=`<b>${esc(p.nombre)}</b>${esc(p.cliente||'')} · ${esc(ETP[p.etapa].t)}<br>${p.progreso}% · ${p.inicio?'día '+dayN(p.inicio):'sin fecha de inicio'}${p.valor?' · '+esc(money(p.valor)):''}${p.notas?`<br><span style="color:var(--muted)">${esc(p.notas)}</span>`:''}`;tip.style.left=(b.left+b.width/2-o.left)+'px';tip.style.top=(b.top-o.top)+'px';tip.hidden=false};
     nd.addEventListener('mouseenter',show);nd.addEventListener('focus',show);nd.addEventListener('mouseleave',()=>tip.hidden=true);nd.addEventListener('blur',()=>tip.hidden=true);
     nd.addEventListener('click',()=>openProject(p.id));nd.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openProject(p.id)}})});
+}
+/* constelación: estrellas que titilan, conexiones tipo neurona y pulsos de luz */
+function sky(cv,G){
+  cancelAnimationFrame(sky.raf);const dpr=Math.min(2,devicePixelRatio||1);cv.width=G.W*dpr;cv.height=G.H*dpr;const x=cv.getContext('2d');x.scale(dpr,dpr);
+  const rnd=(a=>()=>(a=(a*16807)%2147483647)/2147483647)(7);
+  const stars=Array.from({length:Math.round(G.W*G.H/2600)},()=>({x:rnd()*G.W,y:rnd()*G.H,r:rnd()*1.2+.2,p:rnd()*6.28,s:.6+rnd()*1.6}));
+  const N=G.nodes,C={x:G.cx,y:G.cy};
+  // conexiones: centro↔nodo, nodo↔vecino y algunas cruzadas, curvas como dendritas
+  const E=[];N.forEach((n,i)=>{E.push({a:n,b:C,main:true,act:n.active,c:n.c});if(N.length>2){E.push({a:n,b:N[(i+1)%N.length],c:n.c});if(i%3===0)E.push({a:n,b:N[(i+3)%N.length],c:n.c,thin:true})}});
+  const M=[];N.forEach(n=>{const k=4+Math.round(rnd()*3);let prev=null;for(let j=0;j<k;j++){const a=rnd()*6.283,d=n.r+16+rnd()*(G.W<520?26:52),m={x:n.x+Math.cos(a)*d,y:n.y+Math.sin(a)*d,c:n.c,p:rnd()*6.28,s:1+rnd()*2,r:1.2+rnd()*1.4};
+    if(m.x<6||m.y<6||m.x>G.W-6||m.y>G.H-6)continue;M.push(m);E.push({a:m,b:n,c:n.c,thin:true,micro:true});if(prev&&rnd()<.6)E.push({a:m,b:prev,c:n.c,thin:true,micro:true});prev=m}});
+  G.sats.forEach(s=>{let best=null,d=1e9;N.forEach(n=>{const k=(n.x-s.x)**2+(n.y-s.y)**2;if(k<d){d=k;best=n}});E.push({a:s,b:best||C,c:s.c,thin:true,sat:true})});
+  E.forEach(e=>{if(e.micro&&rnd()<.55)e.idle=true});
+  E.forEach((e,i)=>{const mx=(e.a.x+e.b.x)/2,my=(e.a.y+e.b.y)/2,dx=e.b.x-e.a.x,dy=e.b.y-e.a.y,k=(i%2?1:-1)*(e.main?.08:.18);e.q={x:mx-dy*k,y:my+dx*k};e.t=rnd();e.v=(e.main?.0035:.002)*(.7+rnd()*.6)});
+  const pt=(e,t)=>{const u=1-t;return{x:u*u*e.a.x+2*u*t*e.q.x+t*t*e.b.x,y:u*u*e.a.y+2*u*t*e.q.y+t*t*e.b.y}};
+  const hex=(c,a)=>{const n=parseInt(c.slice(1),16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`};
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function frame(ts){
+    x.clearRect(0,0,G.W,G.H);const tm=(ts||0)/1000;
+    stars.forEach(s=>{const a=.25+.55*(.5+.5*Math.sin(tm*s.s+s.p));x.fillStyle=`rgba(220,228,255,${still?.5:a})`;x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);x.fill()});
+    E.forEach(e=>{x.beginPath();x.moveTo(e.a.x,e.a.y);x.quadraticCurveTo(e.q.x,e.q.y,e.b.x,e.b.y);x.strokeStyle=hex(e.c,e.main?.32:e.thin?.10:.18);x.lineWidth=e.main?1.6:1;x.stroke()});
+    M.forEach(m=>{const a=.45+.5*(.5+.5*Math.sin(tm*m.s+m.p));const g=x.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r*5);g.addColorStop(0,hex(m.c,still?.8:a));g.addColorStop(1,hex(m.c,0));x.fillStyle=g;x.beginPath();x.arc(m.x,m.y,m.r*5,0,6.283);x.fill();x.fillStyle=`rgba(255,255,255,${(still?.8:a)*.9})`;x.beginPath();x.arc(m.x,m.y,m.r*.7,0,6.283);x.fill()});
+    E.forEach(e=>{if((e.main&&!e.act)||e.idle)return;if(!still)e.t=(e.t+e.v*(e.micro?1.6:1))%1;
+      for(let k=0;k<6;k++){const t=e.t-k*.018;if(t<0)break;const p=pt(e,t),r=(e.main?3:2)*(1-k/7);
+        const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r*4);g.addColorStop(0,hex(k?e.c:'#ffffff',k?.55-k*.08:.95));g.addColorStop(1,hex(e.c,0));x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,r*4,0,6.283);x.fill()}});
+    // latido del centro
+    const b=.5+.5*Math.sin(tm*1.6);const g=x.createRadialGradient(C.x,C.y,G.cr*.8,C.x,C.y,G.cr*1.9);g.addColorStop(0,`rgba(255,91,31,${.18+.12*b})`);g.addColorStop(1,'rgba(255,91,31,0)');x.fillStyle=g;x.beginPath();x.arc(C.x,C.y,G.cr*1.9,0,6.283);x.fill();
+    if(!still&&view==='centro'&&document.body.contains(cv))sky.raf=requestAnimationFrame(frame)}
+  frame(0);if(!still)sky.raf=requestAnimationFrame(frame);
 }
 function openProject(id){
   const p=id?PROJ.find(x=>x.id===id):{nombre:'',cliente:'',tipo:'cliente',etapa:'levantamiento',progreso:0,valor:null,mensualidad:null,inicio:today(),entrega:null,link:'',notas:''};if(!p)return;openId=null;
