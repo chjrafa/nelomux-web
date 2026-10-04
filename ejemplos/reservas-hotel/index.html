@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reservas de Tu Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Demo de reservas: barra superior, 4 indicadores del mes, calendario habitaciones × días con barras de estadía y panel lateral de detalle. */
+:root{
+  --bg:#f4f3ef;--panel:#ffffff;--panel-2:#f8f7f3;--ink:#14161b;--muted:#5d626d;--line:#e2e0d9;--line-2:#d3d0c7;
+  --brand:#ff5b1f;--brand-ink:#b5390b;
+  --paid:#1f8a55;--paid-bg:#dff3e8;--dep:#e0730f;--dep-bg:#fdebd6;--none:#7a7f8a;--none-bg:#ecebe7;--today:#2f5bea;
+  --fd:"Unbounded","Arial Black",system-ui,sans-serif;--fs:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--fm:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --day:46px;--roomw:150px;--rowh:60px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101216;--panel:#181b21;--panel-2:#1e2229;--ink:#eef0f4;--muted:#a2a8b4;--line:#2a2f38;--line-2:#363c47;
+  --brand:#ff6a33;--brand-ink:#ff9468;--paid:#3ecb85;--paid-bg:#173528;--dep:#ff9c45;--dep-bg:#3b2614;--none:#9aa0ab;--none-bg:#272b33;--today:#6c8cff;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101216;--panel:#181b21;--panel-2:#1e2229;--ink:#eef0f4;--muted:#a2a8b4;--line:#2a2f38;--line-2:#363c47;
+  --brand:#ff6a33;--brand-ink:#ff9468;--paid:#3ecb85;--paid-bg:#173528;--dep:#ff9c45;--dep-bg:#3b2614;--none:#9aa0ab;--none-bg:#272b33;--today:#6c8cff;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.45 var(--fs)}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:18px}
+
+header.top{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}
+.brand{display:flex;gap:12px;align-items:center;margin-right:auto}
+.logo{width:42px;height:42px;border-radius:11px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:700 16px var(--fd)}
+.brand b{display:block;font:700 18px/1.1 var(--fd);letter-spacing:-.02em}
+.brand span{font-size:13px;color:var(--muted)}
+.tag{font:500 11px var(--fm);letter-spacing:.12em;background:var(--brand);color:#14161b;padding:4px 8px;border-radius:6px}
+.month{display:flex;align-items:center;gap:6px}
+.month h1{margin:0;font:600 17px var(--fd);min-width:170px;text-align:center;text-transform:capitalize}
+.ib{width:38px;height:38px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel);cursor:pointer;font-size:18px;line-height:1}
+.btn{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel);cursor:pointer;font-weight:600;font-size:14px}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#14161b}
+.btn:focus-visible,.ib:focus-visible,.bar:focus-visible{outline:3px solid var(--today);outline-offset:2px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:4px}
+.kpi span{font:500 11px var(--fm);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kpi b{font:700 24px var(--fd);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted);font-size:13px}
+.meter{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--brand)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);align-items:center}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend .h{border:2px solid var(--ink);background:transparent}
+
+.cal{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:auto;max-width:100%;position:relative}
+.grid{position:relative;min-width:calc(var(--roomw) + var(--days) * var(--day))}
+.head,.row{display:grid;grid-template-columns:var(--roomw) 1fr}
+.head{position:sticky;top:0;z-index:4;background:var(--panel);border-bottom:1px solid var(--line)}
+.rc{position:sticky;left:0;z-index:3;background:var(--panel);border-right:1px solid var(--line);padding:6px 12px;display:grid;align-content:center}
+.head .rc{z-index:5;font:500 11px var(--fm);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.rc b{font:600 14px var(--fs)}
+.rc span{font-size:12px;line-height:1.25;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.days{display:grid;grid-template-columns:repeat(var(--days),var(--day))}
+.d{text-align:center;padding:6px 0;font-variant-numeric:tabular-nums;border-left:1px solid var(--line)}
+.d:first-child{border-left:0}
+.d small{display:block;font:500 10px var(--fm);color:var(--muted);text-transform:uppercase}
+.d b{font:600 14px var(--fs)}
+.d.we{background:var(--panel-2)}
+.d.td b{background:var(--today);color:#fff;border-radius:6px;padding:1px 6px}
+.row{border-bottom:1px solid var(--line);height:var(--rowh)}
+.row:last-child{border-bottom:0}
+.track{position:relative;cursor:copy;background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);background-size:var(--day) 100%}
+.track .we{position:absolute;top:0;bottom:0;width:var(--day);background:var(--panel-2);pointer-events:none}
+.nowline{position:absolute;top:0;bottom:0;width:2px;background:var(--today);opacity:.7;pointer-events:none;z-index:2}
+.bar{position:absolute;top:11px;bottom:11px;border-radius:9px;border:0;padding:0 10px;display:flex;align-items:center;gap:6px;cursor:pointer;overflow:hidden;white-space:nowrap;font:600 13px var(--fs);text-align:left;z-index:1;box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.bar small{font-weight:400;opacity:.8}
+.bar.paid{background:var(--paid-bg);color:var(--paid);border-left:4px solid var(--paid)}
+.bar.dep{background:var(--dep-bg);color:var(--dep);border-left:4px solid var(--dep)}
+.bar.none{background:var(--none-bg);color:var(--none);border-left:4px solid var(--none);background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(127,127,127,.12) 6px 12px)}
+.bar.in{outline:2px solid var(--ink);outline-offset:-2px}
+.bar.out{opacity:.55}
+.bar.cut-l{border-top-left-radius:0;border-bottom-left-radius:0}
+.bar.cut-r{border-top-right-radius:0;border-bottom-right-radius:0}
+.hint{font-size:13px;color:var(--muted)}
+
+.scrim{position:fixed;inset:0;background:rgba(10,12,16,.45);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--panel);border-left:1px solid var(--line);z-index:21;display:flex;flex-direction:column;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4)}
+.drawer .hd{padding:calc(18px + env(safe-area-inset-top,0px)) 20px 14px;border-bottom:1px solid var(--line);position:relative;display:grid;gap:4px}
+.drawer .hd h2{margin:0;font:700 19px/1.2 var(--fd);letter-spacing:-.02em;padding-right:44px}
+.drawer .hd p{margin:0;color:var(--muted);font-size:14px}
+.x{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top,0px));width:38px;height:38px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer;font-size:20px}
+.drawer .bd{flex:1;overflow:auto;padding:18px 20px;display:grid;gap:16px;align-content:start}
+.drawer .ft{padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-block;font:600 12px var(--fs);padding:4px 10px;border-radius:999px}
+.pill.paid{background:var(--paid-bg);color:var(--paid)}.pill.dep{background:var(--dep-bg);color:var(--dep)}.pill.none{background:var(--none-bg);color:var(--none)}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 12px;margin:0}
+.kv dt{color:var(--muted);font-size:14px}.kv dd{margin:0;font-weight:500;font-variant-numeric:tabular-nums}
+.money{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.money div{background:var(--panel-2);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
+.money span{font:500 10px var(--fm);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.money b{font:600 16px var(--fs);font-variant-numeric:tabular-nums}
+.money .due b{color:var(--dep)}
+form.f{display:grid;gap:12px}
+.f label{display:grid;gap:5px;font-size:13px;font-weight:600}
+.f input,.f select{min-height:42px;border:1px solid var(--line-2);border-radius:10px;padding:8px 12px;background:var(--panel-2);width:100%}
+.f input:focus,.f select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 25%,transparent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:#c2362b;font-size:14px;font-weight:600;min-height:1.2em;margin:0}
+.calc{background:var(--panel-2);border-radius:10px;padding:10px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+footer{font:400 12px var(--fm);color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media (max-width:860px){.kpis{grid-template-columns:1fr 1fr}:root{--roomw:110px;--day:42px}.month h1{min-width:0;font-size:15px}.kpi b{font-size:19px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">TH</div><div><b>Tu Hotel</b><span>Calendario de reservas</span></div><span class="tag">DEMO</span></div>
+    <div class="month"><button class="ib" id="prev" type="button" aria-label="Mes anterior">‹</button><h1 id="mtitle"></h1><button class="ib" id="next" type="button" aria-label="Mes siguiente">›</button></div>
+    <button class="btn" id="hoy" type="button">Hoy</button>
+    <button class="btn primary" id="nueva" type="button">+ Nueva reserva</button>
+  </header>
+
+  <section class="kpis" aria-label="Resumen del mes">
+    <div class="kpi"><span>Ocupación del mes</span><b id="k-occ">0 %</b><div class="meter"><i id="k-occbar"></i></div></div>
+    <div class="kpi"><span>Ingresos del mes</span><b id="k-inc">US$ 0</b><small>por noches del mes</small></div>
+    <div class="kpi"><span>Por cobrar</span><b id="k-due">US$ 0</b><small id="k-dues"></small></div>
+    <div class="kpi"><span>Hoy</span><b id="k-today">0 llegadas</b><small id="k-todays"></small></div>
+  </section>
+
+  <div class="legend"><span><i style="background:var(--paid)"></i>Pagado</span><span><i style="background:var(--dep)"></i>Con anticipo</span><span><i style="background:var(--none)"></i>Sin pago</span><span><i class="h"></i>Hospedado ahora</span><span class="hint">Toca un espacio vacío para reservar esa habitación ese día.</span></div>
+
+  <div class="cal" id="cal"><div class="grid" id="grid"></div></div>
+
+  <footer><span>Demo con datos de ejemplo · los cambios no se guardan</span><span>Sistema hecho por Nelomux · nelomux.com</span></footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dr-title"></aside>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const pad=n=>String(n).padStart(2,'0');
+  const iso=d=>d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
+  const P=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(Date.UTC(a,b-1,c))};
+  const add=(s,n)=>{const d=P(s);d.setUTCDate(d.getUTCDate()+n);return iso(d)};
+  const diff=(a,b)=>Math.round((P(b)-P(a))/864e5);
+  const money=n=>{const w=Math.abs(n-Math.round(n))<.005;return 'US$ '+n.toLocaleString('es',{minimumFractionDigits:w?0:2,maximumFractionDigits:w?0:2})};
+  const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const DIA=['dom','lun','mar','mié','jue','vie','sáb'];
+  const fd=s=>{const d=P(s);return DIA[d.getUTCDay()]+' '+d.getUTCDate()+' '+MES[d.getUTCMonth()].slice(0,3)};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const now=new Date();const TODAY=iso(new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())));
+
+  const ROOMS=[
+    {id:'101',t:'Doble estándar',r:55},{id:'102',t:'Doble estándar',r:55},{id:'103',t:'Doble superior',r:85},{id:'104',t:'Triple',r:75},
+    {id:'201',t:'Suite',r:120},{id:'202',t:'Doble superior',r:85},{id:'203',t:'Familiar',r:95},{id:'204',t:'Suite',r:120}];
+  const RT=Object.fromEntries(ROOMS.map(r=>[r.id,r]));
+
+  // Datos de ejemplo alrededor de hoy (offset en días desde hoy, noches, % pagado)
+  const SEED=[
+    ['101','María González',-3,4,1],['102','Carlos Pérez',-1,2,.5],['103','Luisa Rojas',0,3,.5],['104','Familia Torres',4,4,1],
+    ['201','José Méndez',-2,5,1],['202','Andrea Silva',2,2,0],['203','Familia Ramírez',6,5,.5],['204','Pedro Castillo',11,3,0],
+    ['101','Daniela Ruiz',3,3,.5],['102','Roberto Díaz',8,4,1],['103','Gabriela León',12,2,.5],['201','Martín Herrera',16,6,.5],
+    ['104','Sofía Vargas',19,3,0],['202','Andrés Molina',24,4,.5],['203','Valentina Cruz',26,3,1],['204','Empresa ABC (grupo)',30,4,.5],
+    ['101','Elena Paredes',21,2,1],['103','Ricardo Fuentes',-12,4,1],['202','Camila Ortega',-9,3,1],['204','Familia Blanco',-6,4,1],
+    ['104','Héctor Lugo',33,3,0],['203','Natalia Ríos',36,2,.5],['102','Jorge Salas',40,5,.5]];
+  let seq=1;
+  let RES=SEED.map(([room,guest,off,n,pp])=>{const start=add(TODAY,off),total=RT[room].r*n;
+    return {id:seq++,room,guest,phone:'+58 4'+(12+seq%5)+' 555 0'+pad(seq),start,nights:n,adults:2,total,paid:Math.round(total*pp*100)/100,
+      st:off+n<=0?'out':(off<0?'in':'res')}});
+
+  let view=P(TODAY);view=new Date(Date.UTC(view.getUTCFullYear(),view.getUTCMonth(),1));
+  const pay=r=>r.paid>=r.total?'paid':r.paid>0?'dep':'none';
+  const PAYT={paid:'Pagado',dep:'Con anticipo',none:'Sin pago'};
+  const STT={res:'Reservada',in:'Hospedado',out:'Salió'};
+
+  function render(){
+    const y=view.getUTCFullYear(),m=view.getUTCMonth(),first=iso(view),days=new Date(Date.UTC(y,m+1,0)).getUTCDate(),last=add(first,days);
+    $('#mtitle').textContent=MES[m]+' '+y;
+    const g=$('#grid');g.style.setProperty('--days',days);
+    let h='<div class="head"><div class="rc">Habitación</div><div class="days">';
+    const we=[];
+    for(let i=0;i<days;i++){const s=add(first,i),d=P(s),w=d.getUTCDay();if(w===0||w===6)we.push(i);
+      h+=`<div class="d${(w===0||w===6)?' we':''}${s===TODAY?' td':''}"><small>${DIA[w]}</small><b>${i+1}</b></div>`}
+    h+='</div></div>';
+    const ti=diff(first,TODAY),showNow=ti>=0&&ti<days;
+    ROOMS.forEach(r=>{
+      h+=`<div class="row"><div class="rc"><b>${r.id}</b><span>${esc(r.t)}</span><span>${money(r.r)} / noche</span></div><div class="track" data-room="${r.id}">`;
+      we.forEach(i=>h+=`<i class="we" style="left:calc(${i} * var(--day))"></i>`);
+      if(showNow)h+=`<i class="nowline" style="left:calc(${ti+.5} * var(--day))"></i>`;
+      RES.filter(x=>x.room===r.id).forEach(x=>{
+        const end=add(x.start,x.nights);if(end<=first||x.start>=last)return;
+        const a=Math.max(diff(first,x.start)+.5,0),b=Math.min(diff(first,end)+.5,days),cl=x.start<first,cr=end>last;
+        h+=`<button type="button" class="bar ${pay(x)}${x.st==='in'?' in':''}${x.st==='out'?' out':''}${cl?' cut-l':''}${cr?' cut-r':''}" data-id="${x.id}" style="left:calc(${a} * var(--day));width:calc(${b-a} * var(--day) - 3px)" title="${esc(x.guest)} · ${x.nights} noches · ${PAYT[pay(x)]}">${esc(x.guest)} <small>${x.nights}n</small></button>`});
+      h+='</div></div>'});
+    g.innerHTML=h;
+    // indicadores
+    let occ=0,inc=0,due=0,dueN=0;
+    RES.forEach(x=>{const end=add(x.start,x.nights),a=x.start>first?x.start:first,b=end<last?end:last,n=Math.max(0,diff(a,b));
+      occ+=n;inc+=n*(x.total/x.nights);if(n>0&&x.total>x.paid){due+=x.total-x.paid;dueN++}});
+    const pct=Math.round(occ/(ROOMS.length*days)*100);
+    $('#k-occ').textContent=pct+' %';$('#k-occbar').style.width=pct+'%';
+    $('#k-inc').textContent=money(Math.round(inc));$('#k-due').textContent=money(Math.round(due*100)/100);$('#k-dues').textContent=dueN+(dueN===1?' reserva con saldo':' reservas con saldo');
+    const arr=RES.filter(x=>x.start===TODAY).length,dep=RES.filter(x=>add(x.start,x.nights)===TODAY).length;
+    $('#k-today').textContent=arr+(arr===1?' llegada':' llegadas');$('#k-todays').textContent=dep+(dep===1?' salida':' salidas')+' · '+RES.filter(x=>x.st==='in').length+' hospedados';
+    if(showNow){const c=$('#cal');const target=ti<8?0:Math.max(0,ti*parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--day'))-120);if(!render.done){c.scrollLeft=target;render.done=true}}
+  }
+
+  $('#prev').onclick=()=>{view.setUTCMonth(view.getUTCMonth()-1);render.done=true;render()};
+  $('#next').onclick=()=>{view.setUTCMonth(view.getUTCMonth()+1);render.done=true;render()};
+  $('#hoy').onclick=()=>{const t=P(TODAY);view=new Date(Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),1));render.done=false;render()};
+
+  $('#grid').addEventListener('click',e=>{
+    const b=e.target.closest('.bar');if(b){openRes(+b.dataset.id);return}
+    const t=e.target.closest('.track');if(!t)return;
+    const dw=t.getBoundingClientRect().width/ +$('#grid').style.getPropertyValue('--days');
+    const i=Math.floor((e.clientX-t.getBoundingClientRect().left)/dw);
+    openNew(t.dataset.room,add(iso(view),Math.max(0,i)));
+  });
+
+  const D=$('#drawer'),S=$('#scrim');
+  function close(){D.hidden=true;S.hidden=true}
+  S.onclick=close;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!D.hidden)close()});
+  function show(html){D.innerHTML=html;D.hidden=false;S.hidden=false;D.querySelector('.x').onclick=close;D.querySelector('.x').focus()}
+  function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
+  const clash=(room,start,n,skip)=>RES.find(x=>x.id!==skip&&x.room===room&&x.start<add(start,n)&&start<add(x.start,x.nights));
+
+  function openRes(id){
+    const x=RES.find(r=>r.id===id);if(!x)return;const r=RT[x.room],p=pay(x),end=add(x.start,x.nights);
+    show(`<div class="hd"><span><span class="pill ${p}">${PAYT[p]}</span> · ${STT[x.st]}</span><h2 id="dr-title">${esc(x.guest)}</h2><p>Habitación ${x.room} · ${esc(r.t)}</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
+      <div class="bd">
+        <dl class="kv"><dt>Llegada</dt><dd>${fd(x.start)}</dd><dt>Salida</dt><dd>${fd(end)}</dd><dt>Noches</dt><dd>${x.nights}</dd><dt>Huéspedes</dt><dd>${x.adults} adultos</dd><dt>Teléfono</dt><dd>${esc(x.phone)}</dd></dl>
+        <div class="money"><div><span>Total</span><b>${money(x.total)}</b></div><div><span>Pagado</span><b>${money(x.paid)}</b></div><div class="${x.total>x.paid?'due':''}"><span>Saldo</span><b>${money(Math.max(0,x.total-x.paid))}</b></div></div>
+        ${x.total>x.paid?`<form class="f" id="payf"><label>Registrar pago (US$)<input id="payv" type="number" min="1" step="0.01" inputmode="decimal" value="${(x.total-x.paid).toFixed(2)}"></label><button class="btn" type="submit">Registrar pago</button></form>`:''}
+      </div>
+      <div class="ft">${x.st==='res'?'<button class="btn primary" type="button" id="cin">Hacer check-in</button>':''}${x.st==='in'?'<button class="btn primary" type="button" id="cout">Hacer check-out</button>':''}
+        ${x.total>x.paid?'<button class="btn" type="button" id="remind">Recordar pago por WhatsApp</button>':''}<button class="btn" type="button" id="cancel">Cancelar reserva</button></div>`);
+    const pf=$('#payf');if(pf)pf.onsubmit=e=>{e.preventDefault();const v=+$('#payv').value;if(!(v>0))return;x.paid=Math.min(x.total,Math.round((x.paid+v)*100)/100);render();openRes(id);toast('Pago registrado')};
+    const ci=$('#cin');if(ci)ci.onclick=()=>{x.st='in';render();openRes(id);toast('Check-in hecho')};
+    const co=$('#cout');if(co)co.onclick=()=>{if(x.total>x.paid){toast('Primero registra el saldo pendiente');return}x.st='out';render();openRes(id);toast('Check-out hecho')};
+    const rm=$('#remind');if(rm)rm.onclick=()=>toast('En el sistema real, aquí le llega un WhatsApp con el saldo');
+    $('#cancel').onclick=()=>{$('#cancel').outerHTML='<span>¿Seguro? <button class="btn" type="button" id="cy">Sí, cancelar</button> <button class="btn" type="button" id="cn">No</button></span>';
+      $('#cn').onclick=()=>openRes(id);$('#cy').onclick=()=>{RES=RES.filter(r=>r.id!==id);render();close();toast('Reserva cancelada')}};
+  }
+
+  function openNew(room,start){
+    room=room||ROOMS[0].id;start=start||TODAY;
+    show(`<div class="hd"><span class="hint">Nueva reserva</span><h2 id="dr-title">Reservar habitación</h2><p>El sistema no deja reservar una habitación ocupada.</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
+      <div class="bd"><form class="f" id="nf">
+        <label>Nombre del huésped<input id="n-g" required maxlength="80" placeholder="Ej.: Ana Pérez"></label>
+        <label>Teléfono / WhatsApp<input id="n-p" type="tel" maxlength="30" placeholder="+58 …"></label>
+        <div class="g2"><label>Habitación<select id="n-r">${ROOMS.map(r=>`<option value="${r.id}"${r.id===room?' selected':''}>${r.id} · ${esc(r.t)}</option>`).join('')}</select></label>
+          <label>Adultos<input id="n-a" type="number" min="1" max="6" value="2"></label></div>
+        <div class="g2"><label>Llegada<input id="n-s" type="date" value="${start}"></label><label>Noches<input id="n-n" type="number" min="1" max="30" value="2"></label></div>
+        <label>Anticipo pagado (US$)<input id="n-d" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+        <div class="calc" id="n-c"></div>
+        <p class="err" id="n-e" role="alert"></p>
+        <button class="btn primary" type="submit">Guardar reserva</button>
+      </form></div>`);
+    const upd=()=>{const r=RT[$('#n-r').value],n=Math.max(1,+$('#n-n').value||1),s=$('#n-s').value;
+      $('#n-c').textContent=`${n} noches × ${money(r.r)} = ${money(r.r*n)}`+(s?` · sale el ${fd(add(s,n))}`:'');
+      const c=s&&clash(r.id,s,n);$('#n-e').textContent=c?`La ${r.id} ya está ocupada por ${c.guest} del ${fd(c.start)} al ${fd(add(c.start,c.nights))}.`:''};
+    ['#n-r','#n-n','#n-s'].forEach(s=>$(s).addEventListener('input',upd));upd();
+    $('#n-g').focus();
+    $('#nf').onsubmit=e=>{e.preventDefault();const r=$('#n-r').value,n=Math.max(1,+$('#n-n').value||1),s=$('#n-s').value,g=$('#n-g').value.trim();
+      if(!g){$('#n-e').textContent='Escribe el nombre del huésped.';$('#n-g').focus();return}
+      if(!s){$('#n-e').textContent='Elige la fecha de llegada.';return}
+      if(clash(r,s,n)){upd();return}
+      const total=RT[r].r*n;RES.push({id:seq++,room:r,guest:g,phone:$('#n-p').value.trim()||'—',start:s,nights:n,adults:+$('#n-a').value||2,total,paid:Math.min(total,Math.max(0,+$('#n-d').value||0)),st:'res'});
+      const d=P(s);view=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));render();close();toast('Reserva guardada')};
+  }
+  $('#nueva').onclick=()=>openNew();
+
+  render();
+})();
+</script>
+</body>
+</html>
