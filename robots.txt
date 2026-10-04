@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /crm/
+Disallow: /ejemplos/
 Disallow: /manychat-respuestas.md
 
 Sitemap: https://nelomux.com/sitemap.xml
