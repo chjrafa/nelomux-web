@@ -66,6 +66,35 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);b
 .top .who{font:500 12px var(--fm);color:var(--faint)}
 .demo{background:var(--brand-tint);color:var(--brand-ink);border-bottom:1px solid rgba(255,91,31,.3);padding:8px clamp(12px,2vw,24px);font-size:13.5px}
 main{padding:18px clamp(12px,2vw,24px) 40px}
+.centro{display:grid;gap:16px}
+.live{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.live .dot{width:10px;height:10px;border-radius:50%;background:var(--faint)}
+.live .dot.on{background:var(--ok);box-shadow:0 0 0 0 rgba(79,208,140,.6);animation:ping 1.8s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(79,208,140,0)}100%{box-shadow:0 0 0 0 rgba(79,208,140,0)}}
+.cxwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px}
+.net{position:relative;background:radial-gradient(circle at 50% 50%,rgba(255,91,31,.10),transparent 60%),var(--panel);border:1px solid var(--line);border-radius:16px;min-height:560px;overflow:hidden}
+.net svg{display:block;width:100%;height:100%}
+.net .link{stroke:var(--line-2);stroke-width:1.5;fill:none}
+.net .flow{stroke:var(--brand);stroke-width:2;fill:none;stroke-dasharray:4 14;opacity:.75;animation:flow 1.6s linear infinite}
+.net .sat{stroke:var(--line);stroke-width:1;stroke-dasharray:2 6}
+@keyframes flow{to{stroke-dashoffset:-36}}
+.net .node{cursor:pointer}
+.net .node:focus{outline:none}
+.net .node:focus-visible .ring-bg,.net .node:hover .ring-bg{stroke:var(--ink)}
+.net .tip{position:absolute;pointer-events:none;background:var(--panel-2);border:1px solid var(--line-2);border-radius:10px;padding:8px 12px;font-size:13px;max-width:260px;transform:translate(-50%,calc(-100% - 14px));box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.net .tip b{display:block;font-size:14px}
+.cxside{display:grid;gap:12px;align-content:start}
+.cxside .hero b{font-size:44px}
+.cxk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cxk div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:4px;min-width:0}
+.cxk b{font:600 17px var(--fd);font-variant-numeric:tabular-nums}
+.cxleg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.cxleg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:-1px}
+.pbar{display:inline-block;width:90px;height:8px;border-radius:4px;background:var(--panel-2);vertical-align:middle;margin-right:8px;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:0 4px 4px 0}
+.rng{display:grid;grid-template-columns:minmax(0,1fr) 70px;gap:10px;align-items:center}
+@media (max-width:980px){.cxwrap{grid-template-columns:1fr}.net{min-height:440px}}
+@media (prefers-reduced-motion:reduce){.net .flow,.live .dot.on{animation:none}}
 .brain{display:grid;gap:16px}
 .bhead{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end}
 .bhead h2{margin:4px 0 0;font:600 24px/1.1 var(--fd);letter-spacing:-.02em}
@@ -214,7 +243,7 @@ th{background:rgba(28,32,40,.9)}
   <header class="top"><div class="in">
     <a class="brand" href="/"><svg viewBox="4 4 40 40"><use href="#mk"/></svg><span class="wm">NELO<b>MUX</b></span><span class="t">CRM</span></a>
     <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar por nombre, empresa, correo, teléfono o Instagram" aria-label="Buscar"></label>
-    <div class="seg" role="group" aria-label="Vista"><button type="button" id="v-brain" aria-pressed="true">Cerebro</button><button type="button" id="v-board" aria-pressed="false">Embudo</button><button type="button" id="v-list" aria-pressed="false">Lista</button></div>
+    <div class="seg" role="group" aria-label="Vista"><button type="button" id="v-centro" aria-pressed="true">Centro</button><button type="button" id="v-brain" aria-pressed="false">Cerebro</button><button type="button" id="v-board" aria-pressed="false">Embudo</button><button type="button" id="v-list" aria-pressed="false">Lista</button></div>
     <button class="btn primary" type="button" id="b-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo</button>
     <button class="btn" type="button" id="b-csv">Exportar CSV</button>
     <button class="btn ghost" type="button" id="b-reload" title="Actualizar">Actualizar</button>
@@ -230,6 +259,18 @@ th{background:rgba(28,32,40,.9)}
       <div class="kpi"><span class="lab">Cierre</span><b id="k-rate">—</b><span id="k-rate-s">ganados sobre cerrados</span></div>
     </section>
     <section class="board" id="board" aria-label="Embudo"></section>
+    <section class="centro" id="centro" aria-label="Centro de mando">
+      <div class="bhead"><div><span class="lab">Centro de mando</span><h2>Todos los proyectos, en vivo</h2></div>
+        <div class="live"><span class="dot" id="cx-dot"></span><span id="cx-live">Conectando…</span><button class="btn" type="button" id="cx-add">+ Proyecto</button></div></div>
+      <div class="cxwrap"><div class="net" id="cx-net"></div>
+        <aside class="cxside">
+          <div class="kpi hero"><span class="lab">Día</span><b id="cx-day">0</b><span id="cx-day-s">desde el día cero</span></div>
+          <div class="cxk"><div><span class="lab">Avance total</span><b id="cx-avg">0%</b></div><div><span class="lab">Proyectos activos</span><b id="cx-act">0</b></div>
+            <div><span class="lab">Valor en proyectos</span><b id="cx-val">US$ 0</b></div><div><span class="lab">Mensualidades</span><b id="cx-mrr">US$ 0</b></div></div>
+          <div class="cxleg" id="cx-leg"></div>
+        </aside></div>
+      <div class="tbl"><table><thead><tr><th>Proyecto</th><th>Etapa</th><th>Avance</th><th>Valor</th><th>Día</th><th>Actualizado</th></tr></thead><tbody id="cx-rows"></tbody></table></div>
+    </section>
     <section class="brain" id="brain" hidden aria-label="Cerebro">
       <div class="bhead"><div><span class="lab">Cerebro de Nelomux</span><h2 id="cb-title">Este mes</h2></div>
         <div class="chips" role="group" aria-label="Período" id="cb-per"></div></div>
@@ -297,6 +338,10 @@ function supaApi(sb){return{
   async add(p){const{data,error}=await sb.from('leads').insert(p).select().single();if(error)throw error;return data},
   async remove(id){const{error}=await sb.from('leads').delete().eq('id',id);if(error)throw error},
   async events(id){const{data,error}=await sb.from('lead_eventos').select('*').eq('lead_id',id).order('created_at',{ascending:false});if(error)throw error;return data},
+  async projects(){const{data,error}=await sb.from('proyectos').select('*').order('inicio',{ascending:true,nullsFirst:false});if(error)throw error;return data},
+  async saveProject(id,p){const q=id?sb.from('proyectos').update(p).eq('id',id):sb.from('proyectos').insert(p);const{data,error}=await q.select().single();if(error)throw error;return data},
+  async removeProject(id){const{error}=await sb.from('proyectos').delete().eq('id',id);if(error)throw error},
+  live(cb){try{const ch=sb.channel('centro').on('postgres_changes',{event:'*',schema:'public',table:'proyectos'},()=>cb('p')).on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>cb('l')).subscribe(st=>cb('status',st));return ch}catch(e){cb('status','ERROR')}},
   async allEvents(){const{data,error}=await sb.from('lead_eventos').select('lead_id,tipo,texto,created_at').order('created_at',{ascending:false}).limit(5000);if(error)throw error;return data},
   async addEvent(id,tipo,texto){const{error}=await sb.from('lead_eventos').insert({lead_id:id,tipo,texto});if(error)throw error}
 }}
@@ -315,6 +360,11 @@ function demoApi(){
     const c=new Date(Date.now()-dd*864e5).toISOString(),w=new Date(Date.now()-(dd-12)*864e5).toISOString();
     L.push({id:'demo-g'+i,nombre:'Cliente de ejemplo',empresa:n,email:null,whatsapp:null,interes:['ventas-crm'],equipo:'6-20',mensaje:'',origen:['landing /demo?utm_source=meta','referido','manychat · instagram','sitio · contacto'][i%4],etapa:'ganado',valor:v,proximo_paso:null,proxima_fecha:null,created_at:c,updated_at:w,idioma:'es',_won:w})});
   L.unshift(Object.assign({id:'demo-mc',valor:null,proximo_paso:null,proxima_fecha:null,idioma:'es',email:null,whatsapp:null},{nombre:'Valeria Torres',empresa:null,instagram:'valeria.estudio',manychat_id:'123456',interes:['setters'],equipo:null,mensaje:'Vi el reel del setter, ¿cuánto cuesta?',origen:'manychat · instagram',etapa:'nuevo',created_at:h(1),updated_at:h(1)}));
+  const dd=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10),ud=n=>new Date(Date.now()-n*3600e3).toISOString();
+  const PJ=[['Sistema integral HSH Trade','HSH Trade Limited','cliente','desarrollo',60,null,null,33],['Marketplace AIMEX','Sign Agency','cliente','propuesta',20,3500,200,27],['Sign System','Sign Medios','cliente','propuesta',20,1200,60,27],
+    ['Sistema agropecuaria','Hugo','prospecto','propuesta',15,null,null,3],['Reservas de hotel','Felipe Graterol','prospecto','levantamiento',10,null,null,0],['Sistema para arquitectura','Marlyn Verónica','prospecto','levantamiento',5,null,null,0],
+    ['Web y CRM Nelomux','Nelomux','interno','desarrollo',80,null,null,9],['Redes y Meta Ads','Nelomux','interno','desarrollo',50,null,null,6]]
+    .map(([nombre,cliente,tipo,etapa,progreso,valor,mensualidad,ago],i)=>({id:'pj'+i,nombre,cliente,tipo,etapa,progreso,valor,mensualidad,inicio:dd(ago),entrega:null,link:null,notas:null,created_at:ud(ago*24),updated_at:ud(i*5+1)}));
   const E={};L.forEach(l=>{E[l.id]=[{id:'e'+l.id,lead_id:l.id,tipo:'sistema',texto:'Contacto recibido desde '+(l.origen||'el sitio'),created_at:l.created_at}];if(l.etapa==='ganado')E[l.id].unshift({id:'w'+l.id,lead_id:l.id,tipo:'etapa',texto:'propuesta → ganado',created_at:l._won||l.updated_at});if(['demo_agendada','propuesta'].includes(l.etapa))E[l.id].unshift({id:'d'+l.id,lead_id:l.id,tipo:'etapa',texto:'contactado → demo_agendada',created_at:l.updated_at})});
   const ev=(id,tipo,texto)=>(E[id]=E[id]||[]).unshift({id:'e'+Math.random(),lead_id:id,tipo,texto,created_at:new Date().toISOString()});
   return{
@@ -323,13 +373,17 @@ function demoApi(){
     async add(p){const l=Object.assign({id:'demo-'+Date.now(),created_at:new Date().toISOString(),updated_at:new Date().toISOString(),etapa:'nuevo',interes:[],idioma:'es'},p);L.unshift(l);ev(l.id,'sistema','Contacto creado a mano');return l},
     async remove(id){const i=L.findIndex(x=>x.id===id);L.splice(i,1)},
     async events(id){return(E[id]||[]).slice()},
+    async projects(){return PJ.map(x=>Object.assign({},x))},
+    async saveProject(id,p){if(id){const x=PJ.find(y=>y.id===id);Object.assign(x,p,{updated_at:new Date().toISOString()});return Object.assign({},x)}const x=Object.assign({id:'pj-'+Date.now(),created_at:new Date().toISOString(),updated_at:new Date().toISOString(),tipo:'cliente',etapa:'levantamiento',progreso:0},p);PJ.push(x);return x},
+    async removeProject(id){const i=PJ.findIndex(y=>y.id===id);if(i>=0)PJ.splice(i,1)},
+    live(cb){setTimeout(()=>cb('status','DEMO'),300)},
     async allEvents(){return Object.values(E).flat().sort((a,b)=>a.created_at<b.created_at?1:-1)},
     async addEvent(id,tipo,texto){ev(id,tipo,texto)}
   };
 }
 
 /* ---------- estado y vistas ---------- */
-let leads=[],view='brain',openId=null;
+let leads=[],view='centro',openId=null;
 function filtered(){const q=$('#q').value.trim().toLowerCase();if(!q)return leads;const qd=digits(q);
   return leads.filter(l=>[l.nombre,l.empresa,l.email,l.mensaje,l.instagram].some(v=>String(v||'').toLowerCase().includes(q))||(qd.length>3&&digits(l.whatsapp).includes(qd)))}
 function dueTag(l){if(!l.proxima_fecha||['ganado','perdido'].includes(l.etapa))return'';const t=today();
@@ -349,7 +403,7 @@ function card(l){return`<button type="button" class="cardx" draggable="true" dat
   <span class="meta"><span>${esc(l.proximo_paso||(l.whatsapp?'WA '+l.whatsapp:l.instagram?'@'+l.instagram:l.email||''))}</span><span>${esc(ago(l.created_at))}</span></span></button>`}
 function render(){
   kpis();const F=filtered();
-  if(view==='brain'){}
+  if(view==='brain'||view==='centro'){}
   else if(view==='board'){
     $('#board').innerHTML=ST.map(s=>{const it=F.filter(l=>l.etapa===s.k);
       return`<div class="col" data-st="${s.k}"><h2><span class="l"><i style="background:${s.c}"></i>${s.t}</span><em>${it.length}</em></h2><div class="list">${it.length?it.map(card).join(''):'<p class="empty">Sin contactos</p>'}</div></div>`}).join('');
@@ -358,8 +412,8 @@ function render(){
       <td><span class="pill"><i style="background:${STN[l.etapa].c}"></i>${STN[l.etapa].t}</span></td><td class="sub">${esc((l.interes||[]).map(i=>INT[i]||i).join(', '))}</td>
       <td>${esc(l.proximo_paso||'')} ${dueTag(l)}</td><td>${l.valor?esc(money(l.valor)):''}</td><td class="sub">${esc(ago(l.created_at))}</td></tr>`).join(''):`<tr><td colspan="6" class="nores">No hay contactos que coincidan.</td></tr>`;
   }
-  $('#board').hidden=view!=='board';$('#list').hidden=view!=='list';$('#brain').hidden=view!=='brain';$('.kpis').hidden=view==='brain';$('.search').style.visibility=view==='brain'?'hidden':'';
-  if(view==='brain')brain();
+  $('#board').hidden=view!=='board';$('#list').hidden=view!=='list';$('#brain').hidden=view!=='brain';$('#centro').hidden=view!=='centro';$('.kpis').hidden=view==='brain'||view==='centro';$('.search').style.visibility=view==='brain'||view==='centro'?'hidden':'';
+  if(view==='brain')brain();if(view==='centro')centro();
 }
 /* ---------- Cerebro ---------- */
 let EVS=[],per='mes';
@@ -419,7 +473,92 @@ async function brain(){
 $('#brain').addEventListener('click',e=>{const b=e.target.closest('.blist [data-id]');if(b)openDrawer(b.dataset.id)});
 addEventListener('resize',()=>{if(view==='brain'&&!$('#brain').hidden){clearTimeout(brain.t);brain.t=setTimeout(brain,200)}});
 
-async function load(){try{leads=await api.list();render()}catch(e){toast('No se pudieron cargar los contactos');console.error(e)}}
+/* ---------- Centro de mando ---------- */
+let PROJ=[],liveOn=false;
+const ETP={levantamiento:{t:'Levantamiento',c:'#7ea6ff'},propuesta:{t:'Propuesta',c:'#f0b44c'},desarrollo:{t:'En desarrollo',c:'#ff5b1f'},pruebas:{t:'En pruebas',c:'#c58bff'},entregado:{t:'Entregado',c:'#4fd08c'},soporte:{t:'En soporte',c:'#2fb7a8'},pausado:{t:'Pausado',c:'#6f7684'}};
+const TIP={cliente:'Cliente',prospecto:'Prospecto',interno:'Interno'};
+const dayN=d=>d?Math.max(0,Math.floor((Date.now()-new Date(d+'T00:00'))/864e5)):null;
+async function centro(){
+  try{PROJ=await api.projects()}catch(e){PROJ=[];$('#cx-live').textContent='Falta crear la tabla de proyectos (corre crm/proyectos.sql en Supabase)';}
+  const act=PROJ.filter(p=>!['entregado','pausado'].includes(p.etapa));
+  const avg=PROJ.length?Math.round(PROJ.reduce((a,p)=>a+(+p.progreso||0),0)/PROJ.length):0;
+  const starts=PROJ.map(p=>p.inicio).filter(Boolean).sort();
+  $('#cx-day').textContent=starts.length?dayN(starts[0]):0;$('#cx-day-s').textContent=starts.length?'desde el día cero ('+new Date(starts[0]+'T12:00').toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'})+')':'agrega tu primer proyecto';
+  $('#cx-avg').textContent=avg+'%';$('#cx-act').textContent=act.length;
+  $('#cx-val').textContent=money(PROJ.reduce((a,p)=>a+(+p.valor||0),0));$('#cx-mrr').textContent=money(PROJ.reduce((a,p)=>a+(+p.mensualidad||0),0))+'/mes';
+  $('#cx-leg').innerHTML=Object.entries(ETP).map(([k,v])=>`<span><i style="background:${v.c}"></i>${v.t} · ${PROJ.filter(p=>p.etapa===k).length}</span>`).join('')+'<span style="margin-top:4px;color:var(--faint)">Puntos pequeños: contactos abiertos del CRM</span>';
+  $('#cx-rows').innerHTML=PROJ.length?PROJ.map(p=>`<tr data-pj="${esc(p.id)}"><td><b>${esc(p.nombre)}</b><div class="sub">${esc([p.cliente,TIP[p.tipo]].filter(Boolean).join(' · '))}</div></td><td><span class="pill"><i style="background:${ETP[p.etapa].c}"></i>${ETP[p.etapa].t}</span></td>
+    <td><span class="pbar"><i style="width:${p.progreso}%;background:${ETP[p.etapa].c}"></i></span>${p.progreso}%</td><td>${p.valor?esc(money(p.valor)):''}${p.mensualidad?`<div class="sub">+ ${esc(money(p.mensualidad))}/mes</div>`:''}</td><td class="sub">${p.inicio?'Día '+dayN(p.inicio):''}</td><td class="sub">${esc(ago(p.updated_at))}</td></tr>`).join(''):'<tr><td colspan="6" class="nores">Sin proyectos todavía.</td></tr>';
+  drawNet();
+}
+function drawNet(){
+  const el=$('#cx-net'),W=el.clientWidth||800,H=el.clientHeight||560,cx=W/2,cy=H/2,R=Math.min(W,H)/2-(W<520?62:95);
+  const open=leads.filter(l=>['nuevo','contactado','demo_agendada','propuesta'].includes(l.etapa)).slice(0,40);
+  const order=['cliente','prospecto','interno'],P=PROJ.slice().sort((a,b)=>order.indexOf(a.tipo)-order.indexOf(b.tipo));
+  const avg=PROJ.length?PROJ.reduce((a,p)=>a+(+p.progreso||0),0)/PROJ.length:0,maxV=Math.max(1,...PROJ.map(p=>+p.valor||0));
+  const arc=(x,y,r,pct)=>{if(pct<=0)return'';if(pct>=100)return`<circle cx="${x}" cy="${y}" r="${r}"`;const a=pct/100*2*Math.PI-Math.PI/2,x1=x+r*Math.cos(a),y1=y+r*Math.sin(a);return`<path d="M${x},${y-r}A${r},${r} 0 ${pct>50?1:0} 1 ${x1},${y1}"`};
+  let g='',n='';
+  open.forEach((l,i)=>{const a=i/open.length*2*Math.PI+.2,rr=R+(W<520?40:62),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+    g+=`<line class="sat" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;n+=`<circle cx="${x}" cy="${y}" r="4" fill="${STN[l.etapa].c}" opacity=".85"><title>${esc(l.nombre)} · ${esc(STN[l.etapa].t)}</title></circle>`});
+  P.forEach((p,i)=>{const a=i/P.length*2*Math.PI-Math.PI/2,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a),c=ETP[p.etapa].c,r=(W<520?20:26)+(p.valor?Math.sqrt(p.valor/maxV)*(W<520?8:16):0);
+    const activeLink=!['entregado','pausado'].includes(p.etapa);
+    g+=`<line class="link" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>${activeLink?`<line class="flow" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`:''}`;
+    const nar=W<640,lx=nar?x:x+(Math.cos(a)>.3?r+10:Math.cos(a)<-.3?-(r+10):0),ly=nar?y+r+14:y+(Math.abs(Math.cos(a))<=.3?(Math.sin(a)>0?r+20:-(r+12)):5),anc=nar?'middle':Math.cos(a)>.3?'start':Math.cos(a)<-.3?'end':'middle',lim=nar?15:24;
+    n+=`<g class="node" tabindex="0" role="button" data-pj="${esc(p.id)}" aria-label="${esc(p.nombre)}, ${p.progreso}% de avance">
+      <circle cx="${x}" cy="${y}" r="${r+6}" fill="transparent"/>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="var(--panel-2)"/>
+      <circle class="ring-bg" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="var(--line-2)" stroke-width="4"/>
+      ${arc(x,y,r,p.progreso)} fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      <text x="${x}" y="${y+5}" text-anchor="middle" font-size="${W<520?11:13}" font-weight="700" fill="var(--ink)">${p.progreso}%</text>
+      <text x="${lx}" y="${ly}" text-anchor="${anc}" font-size="${W<520?10.5:12.5}" font-weight="600" fill="var(--ink)">${esc(p.nombre.length>lim?p.nombre.slice(0,lim-1)+'…':p.nombre)}</text></g>`});
+  const cr=W<520?52:72;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de proyectos">${g}
+    <circle cx="${cx}" cy="${cy}" r="${cr+18}" fill="rgba(255,91,31,.07)"/>
+    <circle cx="${cx}" cy="${cy}" r="${cr}" fill="var(--bg)" stroke="var(--line-2)" stroke-width="6"/>
+    ${arc(cx,cy,cr,avg)} fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy-cr*.28}" text-anchor="middle" font-size="${W<520?9:11}" letter-spacing="2" fill="var(--muted)">NELOMUX</text>
+    <text x="${cx}" y="${cy+cr*.16}" text-anchor="middle" font-size="${W<520?24:34}" font-weight="700" fill="var(--ink)">${Math.round(avg)}%</text>
+    <text x="${cx}" y="${cy+cr*.46}" text-anchor="middle" font-size="${W<520?9:11}" fill="var(--muted)">avance total</text>${n}</svg><div class="tip" hidden></div>`;
+  const tip=el.querySelector('.tip');
+  el.querySelectorAll('.node').forEach(nd=>{const p=PROJ.find(x=>x.id===nd.dataset.pj);
+    const show=()=>{const b=nd.getBoundingClientRect(),o=el.getBoundingClientRect();tip.innerHTML=`<b>${esc(p.nombre)}</b>${esc(p.cliente||'')} · ${esc(ETP[p.etapa].t)}<br>${p.progreso}% · ${p.inicio?'día '+dayN(p.inicio):'sin fecha de inicio'}${p.valor?' · '+esc(money(p.valor)):''}${p.notas?`<br><span style="color:var(--muted)">${esc(p.notas)}</span>`:''}`;tip.style.left=(b.left+b.width/2-o.left)+'px';tip.style.top=(b.top-o.top)+'px';tip.hidden=false};
+    nd.addEventListener('mouseenter',show);nd.addEventListener('focus',show);nd.addEventListener('mouseleave',()=>tip.hidden=true);nd.addEventListener('blur',()=>tip.hidden=true);
+    nd.addEventListener('click',()=>openProject(p.id));nd.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openProject(p.id)}})});
+}
+function openProject(id){
+  const p=id?PROJ.find(x=>x.id===id):{nombre:'',cliente:'',tipo:'cliente',etapa:'levantamiento',progreso:0,valor:null,mensualidad:null,inicio:today(),entrega:null,link:'',notas:''};if(!p)return;openId=null;
+  const D=$('#drawer');
+  D.innerHTML=`<div class="hd"><span class="lab">${id?'Proyecto':'Nuevo proyecto'}</span><h2 id="d-name">${esc(p.nombre||'Nuevo proyecto')}</h2><p>${esc(p.cliente||'')}</p><button class="x" type="button" aria-label="Cerrar">×</button></div>
+  <form class="bd" id="pj-f">
+    <div class="g2"><label class="fld"><span class="lab">Nombre</span><input id="pj-n" required maxlength="120" value="${esc(p.nombre)}"></label><label class="fld"><span class="lab">Cliente</span><input id="pj-c" maxlength="120" value="${esc(p.cliente||'')}"></label></div>
+    <div class="g2"><label class="fld"><span class="lab">Tipo</span><select id="pj-t">${Object.entries(TIP).map(([k,v])=>`<option value="${k}"${k===p.tipo?' selected':''}>${v}</option>`).join('')}</select></label>
+      <label class="fld"><span class="lab">Etapa</span><select id="pj-e">${Object.entries(ETP).map(([k,v])=>`<option value="${k}"${k===p.etapa?' selected':''}>${v.t}</option>`).join('')}</select></label></div>
+    <label class="fld"><span class="lab">Avance</span><span class="rng"><input id="pj-pr" type="range" min="0" max="100" step="5" value="${p.progreso}"><input id="pj-pv" type="number" min="0" max="100" value="${p.progreso}"></span></label>
+    <div class="g2"><label class="fld"><span class="lab">Valor (US$)</span><input id="pj-v" type="number" min="0" step="50" value="${p.valor??''}"></label><label class="fld"><span class="lab">Mensualidad (US$)</span><input id="pj-m" type="number" min="0" step="10" value="${p.mensualidad??''}"></label></div>
+    <div class="g2"><label class="fld"><span class="lab">Día cero (inicio)</span><input id="pj-i" type="date" value="${esc(p.inicio||'')}"></label><label class="fld"><span class="lab">Entrega</span><input id="pj-d" type="date" value="${esc(p.entrega||'')}"></label></div>
+    <label class="fld"><span class="lab">Link (demo, propuesta…)</span><input id="pj-l" maxlength="300" value="${esc(p.link||'')}" placeholder="https://"></label>
+    <label class="fld"><span class="lab">Notas</span><textarea id="pj-o" maxlength="2000">${esc(p.notas||'')}</textarea></label>
+    ${p.link?`<a class="btn" href="${esc(p.link)}" target="_blank" rel="noopener">Abrir link</a>`:''}
+  </form>
+  <div class="ft"><span class="msg" id="pj-msg"></span>${id?'<span id="pj-del-w"><button class="btn danger" type="button" id="pj-del">Borrar</button></span>':''}<button class="btn primary" type="submit" form="pj-f" id="pj-s">Guardar</button></div>`;
+  D.hidden=false;$('#scrim').hidden=false;D.querySelector('.x').addEventListener('click',closeDrawer);$('#pj-n').focus();
+  $('#pj-pr').oninput=()=>$('#pj-pv').value=$('#pj-pr').value;$('#pj-pv').oninput=()=>$('#pj-pr').value=$('#pj-pv').value;
+  $('#pj-f').onsubmit=async e=>{e.preventDefault();const num=v=>v===''?null:Math.max(0,+v);
+    const d={nombre:$('#pj-n').value.trim(),cliente:$('#pj-c').value.trim()||null,tipo:$('#pj-t').value,etapa:$('#pj-e').value,progreso:Math.min(100,Math.max(0,Math.round(+$('#pj-pv').value||0))),valor:num($('#pj-v').value),mensualidad:num($('#pj-m').value),inicio:$('#pj-i').value||null,entrega:$('#pj-d').value||null,link:$('#pj-l').value.trim()||null,notas:$('#pj-o').value.trim()||null};
+    if(d.nombre.length<2){$('#pj-msg').textContent='Escribe el nombre del proyecto.';return}
+    $('#pj-s').disabled=true;$('#pj-msg').textContent='Guardando…';
+    try{await api.saveProject(id,d);closeDrawer();toast(id?'Proyecto actualizado':'Proyecto creado');centro()}catch(err){$('#pj-msg').textContent=/duplicate|23505/.test(err.message||err.code||'')?'Ya existe un proyecto con ese nombre.':'No se pudo guardar. Revisa la conexión.'}finally{const b=$('#pj-s');if(b)b.disabled=false}};
+  const del=$('#pj-del');if(del)del.onclick=()=>{$('#pj-del-w').innerHTML='<span class="confirm">¿Borrar este proyecto? <button class="btn danger" type="button" id="pj-y">Sí, borrar</button><button class="btn" type="button" id="pj-no">No</button></span>';
+    $('#pj-no').onclick=()=>openProject(id);$('#pj-y').onclick=async()=>{try{await api.removeProject(id);closeDrawer();toast('Proyecto borrado');centro()}catch(e){toast('No se pudo borrar')}}};
+}
+$('#cx-add').addEventListener('click',()=>openProject(null));
+$('#cx-rows').addEventListener('click',e=>{const t=e.target.closest('[data-pj]');if(t)openProject(t.dataset.pj)});
+addEventListener('resize',()=>{if(view==='centro'){clearTimeout(drawNet.t);drawNet.t=setTimeout(drawNet,150)}});
+function startLive(){if(startLive.on||!api.live)return;startLive.on=true;
+  api.live((k,st)=>{if(k==='status'){const ok=st==='SUBSCRIBED'||st==='DEMO';$('#cx-dot').classList.toggle('on',ok);$('#cx-live').textContent=st==='DEMO'?'En vivo (demo)':ok?'En vivo':'Sin conexión en vivo';return}
+    clearTimeout(startLive.t);startLive.t=setTimeout(async()=>{if(k==='l'){try{leads=await api.list()}catch(e){}}render()},400)})}
+
+async function load(){try{leads=await api.list();render();startLive()}catch(e){toast('No se pudieron cargar los contactos');console.error(e)}}
 
 /* arrastrar entre etapas */
 let dragId=null;
@@ -513,9 +652,9 @@ $('#b-csv').addEventListener('click',()=>{
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='nelomux-contactos-'+today()+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)});
 
 $('#q').addEventListener('input',render);
-function setView(v){view=v;['brain','board','list'].forEach(k=>$('#v-'+k).setAttribute('aria-pressed',String(k===v)));try{localStorage.setItem('nx-view',v)}catch(e){}render()}
-['brain','board','list'].forEach(k=>$('#v-'+k).addEventListener('click',()=>setView(k)));
-try{const v=localStorage.getItem('nx-view');if(v==='board'||v==='list'||v==='brain'){view=v;['brain','board','list'].forEach(k=>$('#v-'+k).setAttribute('aria-pressed',String(k===v)))}}catch(e){}
+function setView(v){view=v;['centro','brain','board','list'].forEach(k=>$('#v-'+k).setAttribute('aria-pressed',String(k===v)));try{localStorage.setItem('nx-view',v)}catch(e){}render()}
+['centro','brain','board','list'].forEach(k=>$('#v-'+k).addEventListener('click',()=>setView(k)));
+try{const v=localStorage.getItem('nx-view');if(['centro','brain','board','list'].includes(v)){view=v;['centro','brain','board','list'].forEach(k=>$('#v-'+k).setAttribute('aria-pressed',String(k===v)))}}catch(e){}
 $('#b-reload').addEventListener('click',()=>load().then(()=>toast('Actualizado')));
 
 /* ---------- arranque ---------- */
