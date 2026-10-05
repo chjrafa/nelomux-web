@@ -16,7 +16,7 @@
 <meta property="og:description" content="Armamos una demo con tu proceso real y te la mostramos en una llamada. Cotizamos después, por escrito.">
 <meta property="og:image" content="https://nelomux.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="/fuentes/fuentes.css">
 <style>
 /* "j" con curva (Lexend 800): la j de Unbounded es un palo recto y se lee como "i". Solo reemplaza esa letra. */
 @font-face{font-family:'NelomuxJ';src:url(data:font/woff2;base64,d09GMgABAAAAAAIMAA8AAAAAA9gAAAG0AAEBywAAAAAAAAAAAAAAAAAAAAAAAAAAGyAcKgZgP1NUQVQqADQRCAqBPIExATYCJAMICwYABCAFVgcgDAcbvwIAjtRgrTYLI1RyHp5fx3fum/n/r6wEIEFIINNuJztVHcrmyb1g/ceOsyyiQLwiK8MEEy2xQbcHm3Bwk/FgMzB1JENdKlBBI03E0OFjpyonh6IABCpoo52UqVVZMXfDKvWSYM7jWtZMCelgmokxcyVm6REDGQXjOb7QC8ssy/4VpeQ3Yi8CUuX0BM1kQignUEugkbR58ZINAUlAlM+agYQMtWQCteSaIZcLLCuKPrw4J0CIolAVIYEcJRiAYYAcZFKlihUrVap4MEp2VKx8SL69wrzKh87VWXb2tHz7/DPnomRHhUoHT9eeNv3Qy9uRVcy3f/rk4JvY8bHiode2vxvTsuWmli1vqbvZ+EpWs/rV6TW65dNL7rYoLbl63l2jL8OPdR/Wt9ePR6VTei1Y0jkfMqnn1o7tdvbocbRTuxPghUDEy/KNro+aXXXQ/3JZ9g9+9Fk2B/787OJL0T41y7qiVALBwyWNTKB2iWA+pZHaxWSeBJIWMhCYMh1kIi8vqcLOgkqqfK68GhqYbKHFNlphrnVmWGipxZbYYJgtNlhnrsFWW2GBDCgu64H4IIo9N/IjAAA=) format('woff2');font-weight:100 900;font-style:normal;unicode-range:U+006A}
@@ -92,6 +92,11 @@ legend{font-size:14px;font-weight:600;padding:0;margin-bottom:8px}
 .chips span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--paper);font-size:14px;cursor:pointer;user-select:none}
 .chips input:checked+span{background:var(--ink);border-color:var(--ink);color:#fff}
 .chips input:focus-visible+span{outline:2px solid #2f45f5;outline-offset:2px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted)}
+.consent input{width:20px;height:20px;min-height:0;margin:1px 0 0;padding:0;flex:none;accent-color:var(--brand)}
+.consent input:focus-visible{outline:3px solid #2f45f5;outline-offset:2px}
+.consent a{color:var(--brand-ink);text-decoration:underline}
+label.f small,legend small{font-weight:400;color:var(--muted)}
 .trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .form .btn{width:100%;min-height:56px;font-size:17px}
 .st{min-height:1.4em;font-size:15px;line-height:1.4}
@@ -145,7 +150,9 @@ section.b{padding-block:clamp(64px,8vw,104px)}
 .end .mail{display:block;margin-top:14px;font:500 14px var(--fm);color:var(--muted-dk)}
 footer{background:var(--tile);color:var(--muted-dk);border-top:1px solid var(--line-dk);font-size:13px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding-block:20px 28px}
-footer a{color:var(--muted-dk)}
+footer a{color:var(--muted-dk);text-decoration:underline;text-underline-offset:3px}
+footer a:hover,footer a:focus-visible{color:#fff}
+footer .lnav{display:flex;flex-wrap:wrap;gap:6px 16px}
 
 @media (max-width:980px){
   .hero .wrap{grid-template-columns:1fr}
@@ -198,15 +205,16 @@ footer a{color:var(--muted-dk)}
       <div class="hide-sent" style="display:grid;gap:14px">
         <div class="row2">
           <label class="f"><span data-en="Name">Nombre</span><input name="nombre" id="f-nombre" autocomplete="name" required maxlength="120"></label>
-          <label class="f"><span data-en="Company">Empresa</span><input name="empresa" id="f-empresa" autocomplete="organization" maxlength="160"></label>
+          <label class="f"><span><span data-en="Company">Empresa</span> <small data-en="(optional)">(opcional)</small></span><input name="empresa" id="f-empresa" autocomplete="organization" maxlength="160"></label>
         </div>
+        <p class="fine" style="text-align:left;margin:0" data-en="Leave at least your WhatsApp or your email so we can reply.">Deja al menos tu WhatsApp o tu correo para poder responderte.</p>
         <div class="row2">
           <label class="f"><span>WhatsApp</span><input name="whatsapp" id="f-whatsapp" type="tel" autocomplete="tel" inputmode="tel" maxlength="40" placeholder="+58 …"></label>
           <label class="f"><span data-en="Email">Correo</span><input name="email" id="f-email" type="email" autocomplete="email" maxlength="200"></label>
         </div>
-        <label class="f"><span data-en="How many people are on your team?">¿Cuántas personas tiene tu equipo?</span>
+        <label class="f"><span><span data-en="How many people are on your team?">¿Cuántas personas tiene tu equipo?</span> <small data-en="(optional)">(opcional)</small></span>
           <select name="equipo" id="f-equipo"><option value="" data-en="Choose one">Elige una opción</option><option value="1-5">1–5</option><option value="6-20">6–20</option><option value="21-50">21–50</option><option value="50+">50+</option></select></label>
-        <fieldset><legend data-en="What do you want to automate?">¿Qué quieres automatizar?</legend>
+        <fieldset><legend><span data-en="What do you want to automate?">¿Qué quieres automatizar?</span> <small data-en="(optional)">(opcional)</small></legend>
           <div class="chips">
             <label><input type="checkbox" name="interes" value="ventas-crm"><span data-en="Sales and CRM">Ventas y CRM</span></label>
             <label><input type="checkbox" name="interes" value="setters"><span>Setters</span></label>
@@ -220,7 +228,8 @@ footer a{color:var(--muted-dk)}
         </fieldset>
         <label class="f"><span><span data-en="Tell us a little more">Cuéntanos un poco más</span> <small data-en="(optional)">(opcional)</small></span><textarea name="mensaje" id="f-mensaje" maxlength="2000" data-ph-es="Ej.: armamos las cotizaciones a mano en Excel y tardamos 2 días." data-ph-en="E.g.: we build quotes by hand in Excel and it takes 2 days."></textarea></label>
         <div class="trap" aria-hidden="true"><label>Sitio web<input name="sitio" tabindex="-1" autocomplete="off"></label></div>
-        <button type="submit" class="btn primary" data-en="I want my demo">Quiero mi demo</button>
+        <label class="consent" for="f-acepto"><input type="checkbox" name="acepto" id="f-acepto" required><span><span data-en="I have read the">He leído la</span> <a href="/privacidad/" data-en="privacy policy">política de privacidad</a> <span data-en="and I agree that Nelomux uses these details only to reply to me.">y acepto que Nelomux use estos datos solo para responderme.</span></span></label>
+        <button type="submit" class="btn primary" data-en="Send and book my demo">Enviar y agendar mi demo</button>
       </div>
       <p class="st" data-status role="status" aria-live="polite"></p>
       <a class="wa-alt" data-wa hidden href="#" target="_blank" rel="noopener" data-en="Send by WhatsApp instead">Enviar por WhatsApp</a>
@@ -229,7 +238,7 @@ footer a{color:var(--muted-dk)}
         <a class="btn primary" href="/#casos" data-en="See our work →">Ver nuestro trabajo →</a>
         <a class="btn ghost" href="/#soluciones" data-en="See our solutions">Ver soluciones</a>
       </div>
-      <p class="fine hide-sent" data-en="We only use your details to reply to you.">Solo usamos tus datos para responderte.</p>
+      <p class="fine hide-sent" data-en="We only use your details to reply to you. We do not sell or share them.">Solo usamos tus datos para responderte. No los vendemos ni los compartimos.</p>
     </form>
   </div>
 </header>
@@ -237,7 +246,7 @@ footer a{color:var(--muted-dk)}
 <main>
 <section class="b" data-net="0.8,0.55" data-net-light>
   <div class="wrap">
-    <div class="head"><span class="kick" data-en="How it works">Cómo funciona</span><h2 data-en="Three steps, and you only pay if it’s useful.">Tres pasos, y pagas solo si te sirve.</h2></div>
+    <div class="head"><span class="kick" data-en="How it works">Cómo funciona</span><h2 data-en="Three steps, and you decide after seeing the demo.">Tres pasos, y decides después de ver la demo.</h2></div>
     <ol class="steps">
       <li><span class="n">01</span><h3 data-en="You tell us the process">Nos cuentas el proceso</h3><p data-en="A short call: what your team does by hand, where things get lost and what you’d like to see in one place.">Una llamada corta: qué hace tu equipo a mano, dónde se pierden las cosas y qué te gustaría ver en un solo lugar.</p><span class="meta" data-en="Call">Llamada</span></li>
       <li><span class="n">02</span><h3 data-en="We build the demo">Armamos la demo</h3><p data-en="A working version of your process, with example data, so you can click through it as if it were already yours.">Una versión funcionando de tu proceso, con datos de ejemplo, para que la uses como si ya fuera tuya.</p><span class="meta" data-en="Working demo">Demo funcional</span></li>
@@ -266,7 +275,7 @@ footer a{color:var(--muted-dk)}
       <div class="sol"><h3 data-en="Quotes and invoicing">Cotizaciones y facturación</h3><p data-en="With your prices and branding, and automatic payment reminders.">Con tus precios y tu marca, y recordatorios de cobro automáticos.</p></div>
       <div class="sol"><h3 data-en="Reports and dashboards">Reportes y tableros</h3><p data-en="Field reports, approvals and the numbers management needs.">Reportes de campo, aprobaciones y los números que necesita Dirección.</p></div>
     </div>
-    <div class="sectors"><b data-en="In use in">En uso en</b><span data-en="Vehicle dealerships">Concesionarios de vehículos</span><span data-en="Industrial engineering">Ingeniería industrial</span><span data-en="Outdoor advertising">Publicidad exterior</span><span data-en="Trade associations">Gremios y asociaciones</span></div>
+    <div class="sectors"><b data-en="Industries we work with">Sectores con los que trabajamos</b><span data-en="Vehicle dealerships">Concesionarios de vehículos</span><span data-en="Industrial engineering">Ingeniería industrial</span><span data-en="Outdoor advertising">Publicidad exterior</span><span data-en="Trade associations">Gremios y asociaciones</span></div>
   </div>
 </section>
 
@@ -290,7 +299,7 @@ footer a{color:var(--muted-dk)}
     <div class="acts"><a class="btn primary" href="#formulario" data-en="Book a demo">Agendar demo</a><a class="btn ghost" id="wa-end" href="https://wa.me/584246759019" target="_blank" rel="noopener" data-en="Message on WhatsApp">Escribir por WhatsApp</a></div>
   </div>
 </section>
-<footer><div class="wrap"><span><b style="color:#fff">Nelomux</b> · <span data-en="Your whole business in one system.">Todo tu negocio en un solo sistema.</span></span><span>© 2026 · nelomux.com</span></div></footer>
+<footer><div class="wrap"><span><b style="color:#fff">Nelomux</b> · <span data-en="Owner: Jose Rafael Campos · Venezuela">Responsable: Jose Rafael Campos · Venezuela</span> · info@nelomux.com</span><nav class="lnav" aria-label="Legal"><a href="/privacidad/" data-en="Privacy">Privacidad</a><a href="/terminos/" data-en="Terms">Términos</a><a href="/cookies/">Cookies</a><a href="/reembolsos/" data-en="Refunds">Reembolsos</a><span>© 2026</span></nav></div></footer>
 
 <script src="../config.js"></script>
 <script src="../lead.js"></script>

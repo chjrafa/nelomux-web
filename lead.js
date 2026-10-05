@@ -1,18 +1,19 @@
 /* Formulario de contacto de Nelomux → CRM (Supabase).
    Uso: NelomuxLead.bind(form, {lang:'es'|'en', origen:'demo'}) sobre un <form> con campos
-   name="nombre|empresa|email|whatsapp|equipo|mensaje", casillas name="interes" y un campo trampa name="sitio" oculto.
+   name="nombre|empresa|email|whatsapp|equipo|mensaje", casillas name="interes", la casilla obligatoria name="acepto" (consentimiento)
+   y un campo trampa name="sitio" oculto. El consentimiento queda registrado en el campo origen del contacto.
    Si Supabase no está configurado (config.js) o falla, el contacto se manda por WhatsApp con los datos ya escritos. */
 (function () {
   const C = window.NELOMUX || {};
   const T = {
     es: {
-      req: 'Escribe tu nombre.', contact: 'Deja tu WhatsApp o tu correo para poder responderte.', mail: 'Revisa el correo: parece incompleto.',
+      req: 'Escribe tu nombre.', consent: 'Para enviar, marca la casilla de la política de privacidad.', contact: 'Deja tu WhatsApp o tu correo para poder responderte.', mail: 'Revisa el correo: parece incompleto.',
       sending: 'Enviando…', ok: '¡Listo! Recibimos tus datos y te escribimos pronto por WhatsApp o correo.',
       wa: 'Abrimos WhatsApp con tus datos listos: solo toca enviar.', fail: 'No se pudo enviar. Escríbenos por WhatsApp y te respondemos igual.',
       greet: 'Hola, quiero agendar una demo con Nelomux.', f: { nombre: 'Nombre', empresa: 'Empresa', email: 'Correo', whatsapp: 'WhatsApp', equipo: 'Equipo', interes: 'Quiero automatizar', mensaje: 'Mensaje' }
     },
     en: {
-      req: 'Please write your name.', contact: 'Leave your WhatsApp or email so we can reply.', mail: 'Check the email: it looks incomplete.',
+      req: 'Please write your name.', consent: 'To send, tick the privacy policy box.', contact: 'Leave your WhatsApp or email so we can reply.', mail: 'Check the email: it looks incomplete.',
       sending: 'Sending…', ok: 'Done! We got your details and will reach out soon by WhatsApp or email.',
       wa: 'We opened WhatsApp with your details ready: just tap send.', fail: 'It didn’t go through. Message us on WhatsApp and we’ll still reply.',
       greet: 'Hi, I’d like to book a demo with Nelomux.', f: { nombre: 'Name', empresa: 'Company', email: 'Email', whatsapp: 'WhatsApp', equipo: 'Team size', interes: 'I want to automate', mensaje: 'Message' }
@@ -60,6 +61,9 @@
       if (d.nombre.length < 2) { say(t.req, 'err'); form.nombre && form.nombre.focus(); return }
       if (!d.email && !d.whatsapp) { say(t.contact, 'err'); (form.whatsapp || form.email).focus(); return }
       if (d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { say(t.mail, 'err'); form.email.focus(); return }
+      const ok = form.querySelector('[name="acepto"]');
+      if (ok && !ok.checked) { say(t.consent, 'err'); ok.focus(); return }
+      if (ok) d.origen = (d.origen + ' · acepta privacidad v2026-10-05').slice(0, 300);
       const wait = 2500 - (Date.now() - t0); // envíos instantáneos = bots: esperamos en vez de ignorar en silencio
       if (wait > 0) await new Promise(r => setTimeout(r, wait));
       const link = waLink(d, lang);
