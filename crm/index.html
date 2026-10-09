@@ -48,6 +48,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);b
 .gate p{margin:0;color:var(--muted)}
 .gate label{display:grid;gap:6px}
 .gate .err{color:var(--bad);min-height:1.4em;font-size:14px}
+.gate .ok{color:var(--ok);min-height:1.4em;font-size:14px}
+.gate .link{background:none;border:0;padding:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;justify-self:start}
+.gate .link:hover,.gate .link:focus-visible{color:var(--brand-ink)}
 .gate ol{margin:0;padding-left:20px;color:var(--muted);display:grid;gap:6px}
 .gate code{font:500 12.5px var(--fm);background:var(--bg);padding:2px 6px;border-radius:6px;color:var(--brand-ink)}
 
@@ -247,6 +250,17 @@ th{background:rgba(28,32,40,.9)}
   <label><span class="lab">Contraseña</span><input id="l-pass" type="password" autocomplete="current-password" required></label>
   <button class="btn primary" type="submit" id="l-btn">Entrar</button>
   <p class="err" id="l-err" role="alert"></p>
+  <button class="link" type="button" id="l-forgot">Olvidé mi contraseña</button>
+</div></form>
+
+<form class="gate" id="newpass" data-net="0.5,0.25" hidden><div class="box">
+  <div class="logo"><svg viewBox="4 4 40 40"><use href="#mk"/></svg><span class="wm">NELO<b>MUX</b></span></div>
+  <h1>Nueva contraseña</h1>
+  <p>Escribe la contraseña nueva para tu CRM. Mínimo 8 caracteres.</p>
+  <label><span class="lab">Contraseña nueva</span><input id="n-pass" type="password" autocomplete="new-password" minlength="8" required></label>
+  <label><span class="lab">Repítela</span><input id="n-pass2" type="password" autocomplete="new-password" minlength="8" required></label>
+  <button class="btn primary" type="submit" id="n-btn">Guardar y entrar</button>
+  <p class="err" id="n-err" role="alert"></p>
 </div></form>
 
 <!-- App -->
@@ -796,10 +810,30 @@ if(DEMO){api=demoApi();$('#demo-bar').hidden=false;$('#b-out').hidden=true;showA
 if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY||!window.supabase){$('#setup').hidden=false;return}
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);api=supaApi(sb);
 $('#b-out').addEventListener('click',async()=>{await sb.auth.signOut();location.reload()});
-sb.auth.getSession().then(({data})=>{if(data.session)showApp(data.session.user.email);else{$('#login').hidden=false;$('#l-email').focus()}});
-$('#login').addEventListener('submit',async e=>{e.preventDefault();$('#l-err').textContent='';$('#l-btn').disabled=true;
-  const{data,error}=await sb.auth.signInWithPassword({email:$('#l-email').value.trim(),password:$('#l-pass').value});$('#l-btn').disabled=false;
-  if(error){$('#l-err').textContent='Correo o contraseña incorrectos.';return}showApp(data.user.email)});
+/* Explica el fallo real: sin conexión, credenciales, correo sin confirmar o demasiados intentos */
+function authMsg(error){const m=String(error&&error.message||''),st=error&&error.status||0,code=error&&error.code||'';
+  if(!st||/fetch|network|load failed/i.test(m))return'No se pudo conectar con Supabase. Revisa tu internet o si el proyecto está pausado en supabase.com (Project → Restore).';
+  if(code==='email_not_confirmed'||/not confirmed/i.test(m))return'Ese correo todavía no está confirmado. Revisa el correo de confirmación de Supabase.';
+  if(st===429||/rate limit|too many/i.test(m))return'Demasiados intentos. Espera unos minutos y vuelve a probar.';
+  if(code==='invalid_credentials'||st===400)return'Correo o contraseña incorrectos. Si no la recuerdas, toca "Olvidé mi contraseña".';
+  return'No se pudo entrar ('+(st||'sin conexión')+'): '+m}
+const recovering=/type=recovery/.test(location.hash);
+sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){$('#login').hidden=true;$('#app').hidden=true;$('#newpass').hidden=false;$('#n-pass').focus()}});
+sb.auth.getSession().then(({data})=>{if(recovering&&data.session){$('#newpass').hidden=false;$('#n-pass').focus()}else if(data.session)showApp(data.session.user.email);else{$('#login').hidden=false;$('#l-email').focus()}})
+  .catch(()=>{$('#login').hidden=false;$('#l-err').textContent=authMsg({})});
+$('#login').addEventListener('submit',async e=>{e.preventDefault();$('#l-err').textContent='';$('#l-err').className='err';$('#l-btn').disabled=true;
+  let r;try{r=await sb.auth.signInWithPassword({email:$('#l-email').value.trim(),password:$('#l-pass').value})}catch(x){r={error:x}}$('#l-btn').disabled=false;
+  if(r.error){$('#l-err').textContent=authMsg(r.error);return}showApp(r.data.user.email)});
+$('#l-forgot').addEventListener('click',async()=>{const em=$('#l-email').value.trim(),o=$('#l-err');o.className='err';
+  if(!em||!$('#l-email').checkValidity()){o.textContent='Escribe tu correo arriba y vuelve a tocar "Olvidé mi contraseña".';$('#l-email').focus();return}
+  let r;try{r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname})}catch(x){r={error:x}}
+  if(r.error){o.textContent=authMsg(r.error);return}
+  o.className='ok';o.textContent='Listo. Si ese correo tiene usuario, te llegó un enlace para crear una contraseña nueva. Revisa también spam.'});
+$('#newpass').addEventListener('submit',async e=>{e.preventDefault();const a=$('#n-pass').value,b=$('#n-pass2').value,o=$('#n-err');o.textContent='';
+  if(a.length<8){o.textContent='Mínimo 8 caracteres.';return}if(a!==b){o.textContent='Las dos contraseñas no coinciden.';return}
+  $('#n-btn').disabled=true;let r;try{r=await sb.auth.updateUser({password:a})}catch(x){r={error:x}}$('#n-btn').disabled=false;
+  if(r.error){o.textContent=authMsg(r.error);return}
+  history.replaceState(null,'',location.pathname);$('#newpass').hidden=true;showApp(r.data.user.email);toast('Contraseña actualizada')});
 })();
 </script>
 </body>
