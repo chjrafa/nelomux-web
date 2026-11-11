@@ -296,6 +296,19 @@ body::after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;
 /* Viñeta en la ficha del proyecto */
 dialog.project .player::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(0,0,0,.55)}
 
+/* ---------- Aviso legal ---------- */
+.legal-ft{margin:10px 0 0;font-size:.75rem;color:#6e7280}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:#9aa0ad;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--fg)}
+dialog.priv{width:min(720px,100%);max-width:100%;max-height:calc(100% - 32px);margin:auto;padding:0;border:0;border-radius:10px;background:var(--ink);color:var(--fg);overflow:auto}
+dialog.priv::backdrop{background:rgba(5,5,8,.85)}
+dialog.priv .bar{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(16,16,20,.95);border-bottom:1px solid var(--line)}
+dialog.priv .x{background:none;border:1.5px solid rgba(243,244,246,.4);border-radius:999px;padding:8px 16px}
+dialog.priv .pbody{padding:24px 22px 30px}
+dialog.priv h2{margin:0 0 16px;font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:2.6rem;line-height:.9}
+dialog.priv p{margin:0 0 14px;color:#d3d6dd;font-size:.95rem}
+dialog.priv a{color:#9db3ff}
+
 /* ---------- Responsive ---------- */
 @media (max-width:1000px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -590,6 +603,7 @@ dialog.project .player::after{content:"";position:absolute;inset:0;pointer-event
     <span>© 2026 · <a href="#top" data-i18n="ft.top">Volver arriba ↑</a></span>
   </div>
   <div class="wrap"><p class="credit"><a href="https://nelomux.com/?utm_source=bycriscarree&amp;utm_medium=credito" target="_blank" rel="noopener" data-i18n="ft.by">Hecho por nelomux</a></p></div>
+  <div class="wrap"><p class="legal-ft"><span data-i18n="ft.rights">Videos y fotos: trabajo de ByCriscarree. Las marcas y logotipos que aparecen pertenecen a sus dueños.</span> <button class="linkbtn" id="privOpen" data-i18n="ft.priv">Aviso de privacidad</button></p></div>
 </footer>
 
 <dialog class="project" id="proj" aria-labelledby="pj-title">
@@ -614,6 +628,20 @@ dialog.project .player::after{content:"";position:absolute;inset:0;pointer-event
       <h4 data-i18n="p.piece">La pieza</h4><p id="pj-context"></p>
       <a class="pill red js-wa" href="#contact" id="pjCta"><span data-i18n="w.want">Quiero algo así</span> <span class="arr">→</span></a>
     </div>
+  </div>
+</dialog>
+
+<dialog class="priv" id="priv" aria-labelledby="priv-t">
+  <div class="bar"><span class="mono">ByCriscarree</span><button class="x mono" id="privClose" data-i18n="n.close">Cerrar</button></div>
+  <div class="pbody" data-i18n="pv.body">
+    <h2 id="priv-t">Aviso de privacidad</h2>
+    <p><strong>Qué datos se piden.</strong> El formulario de contacto pide tu nombre, tu marca o empresa (opcional), el tipo de proyecto y un mensaje.</p>
+    <p><strong>Adónde van.</strong> Esta web no guarda nada. Al enviar, el mensaje se abre en tu WhatsApp o en tu correo, y tú decides si lo mandas. Solo lo recibe Cris (ByCriscarree).</p>
+    <p><strong>Para qué se usan.</strong> Solo para responderte sobre tu proyecto. No se venden ni se comparten con terceros, y no se usan para publicidad.</p>
+    <p><strong>Cookies y seguimiento.</strong> No usamos cookies de publicidad ni de analítica. El navegador recuerda el idioma que elegiste, nada más. Las tipografías se cargan desde Google Fonts.</p>
+    <p><strong>Tus derechos.</strong> Puedes pedir en cualquier momento que se borre la conversación y tus datos escribiendo a <a href="mailto:Bycr1xgg@gmail.com">Bycr1xgg@gmail.com</a>.</p>
+    <p><strong>Contenido.</strong> Los videos y fotos son trabajo de ByCriscarree y se muestran como portafolio. Las marcas, logotipos y personas que aparecen pertenecen a sus dueños. Si quieres que se retire una pieza, escribe al mismo correo.</p>
+    <p class="mono" style="color:var(--muted)">Actualizado: noviembre de 2026</p>
   </div>
 </dialog>
 
@@ -677,7 +705,8 @@ const EN = {
   'k.lead':'Tell me what you have in mind. I’ll get back to you with an idea, not a template.','k.name':'Name','k.co':'Brand or company','k.type':'Project type','k.msg':'What do you want to tell?',
   'k.ph':'E.g. a new model launch, a video for your next event, monthly content for your brand…','k.legal':'Sending opens your WhatsApp with the message ready. Your details are only used to reply to you.',
   'o.auto':'Automotive','o.music':'Music, DJ or event','o.brand':'Brand or business','o.sport':'Sports','o.other':'Other',
-  'ft.top':'Back to top ↑','ft.by':'Made by nelomux',
+  'ft.top':'Back to top ↑','ft.by':'Made by nelomux','ft.rights':'Videos and photos: work by ByCriscarree. Brands and logos shown belong to their owners.','ft.priv':'Privacy notice',
+  'pv.body':'<h2 id="priv-t">Privacy notice</h2><p><strong>What we ask for.</strong> The contact form asks for your name, your brand or company (optional), the project type and a message.</p><p><strong>Where it goes.</strong> This website stores nothing. When you send, the message opens in your WhatsApp or email and you decide whether to send it. Only Cris (ByCriscarree) receives it.</p><p><strong>What it is used for.</strong> Only to reply about your project. It is not sold or shared with third parties and is not used for advertising.</p><p><strong>Cookies and tracking.</strong> We use no advertising or analytics cookies. Your browser only remembers the language you chose. Fonts load from Google Fonts.</p><p><strong>Your rights.</strong> You can ask at any time for the conversation and your data to be deleted by writing to <a href="mailto:Bycr1xgg@gmail.com">Bycr1xgg@gmail.com</a>.</p><p><strong>Content.</strong> The videos and photos are ByCriscarree\'s work and are shown as a portfolio. Brands, logos and people shown belong to their owners. If you want a piece taken down, write to the same address.</p><p class="mono" style="color:var(--muted)">Updated: November 2026</p>',
   'p.client':'Client','p.year':'Year','p.role':'Role','p.format':'Format','p.pending':'Client, year, role and results to be confirmed with Cris before launch.','p.piece':'The piece'
 };
 const UI = {
@@ -933,6 +962,12 @@ document.querySelectorAll('.svc video').forEach(v => lazyV.observe(v));
 const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pre'); rio.unobserve(e.target); } }), {threshold:.12});
 function revealSetup(){ document.querySelectorAll('.rv:not(.seen)').forEach((el,i) => { el.classList.add('seen'); if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); el.style.transitionDelay = (i%3)*80+'ms'; rio.observe(el); } }); }
 revealSetup();
+
+/* Aviso de privacidad */
+const priv = document.getElementById('priv');
+document.getElementById('privOpen').addEventListener('click', () => priv.showModal());
+document.getElementById('privClose').addEventListener('click', () => priv.close());
+priv.addEventListener('click', e => { if (e.target === priv) priv.close(); });
 
 /* ====== Profundidad ====== */
 if (!reduce) {
