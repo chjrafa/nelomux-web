@@ -27,7 +27,7 @@
     ['nombre', 'empresa', 'equipo', 'email', 'whatsapp'].forEach(k => { if (d[k]) lines.push(`${t.f[k]}: ${d[k]}`) });
     if (d.interes && d.interes.length) lines.push(`${t.f.interes}: ${d.interes.join(', ')}`);
     if (d.mensaje) lines.push(d.mensaje);
-    return `https://wa.me/${C.WHATSAPP || '584246759019'}?text=${encodeURIComponent(lines.join('\n'))}`;
+    return `https://wa.me/${C.WHATSAPP || '584146953882'}?text=${encodeURIComponent(lines.join('\n'))}`;
   }
 
   async function save(d) {

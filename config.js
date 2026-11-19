@@ -5,7 +5,7 @@
 window.NELOMUX = {
   SUPABASE_URL: 'https://zmkotzzkpokbqtltozau.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpta290enprcG9rYnF0bHRvemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjI1ODQsImV4cCI6MjEwNjM5ODU4NH0.rKwvmRCiRXuwyWGw_vq9DgNHBTtpmiX9ydpqoTZdhCc',
-  WHATSAPP: '584246759019',
-  WHATSAPP_LABEL: '+58 424 675 9019',
+  WHATSAPP: '584146953882',
+  WHATSAPP_LABEL: '+58 414 695 3882',
   EMAIL: 'info@nelomux.com'
 };

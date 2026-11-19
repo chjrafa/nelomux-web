@@ -296,7 +296,7 @@ footer .lnav{display:flex;flex-wrap:wrap;gap:6px 16px}
 <section class="end" data-net="0.72,0.5">
   <div class="wrap">
     <div><h2 data-en="What does your team still do by hand?">¿Qué sigue haciendo tu equipo a mano?</h2></div>
-    <div class="acts"><a class="btn primary" href="#formulario" data-en="Book a demo">Agendar demo</a><a class="btn ghost" id="wa-end" href="https://wa.me/584246759019" target="_blank" rel="noopener" data-en="Message on WhatsApp">Escribir por WhatsApp</a></div>
+    <div class="acts"><a class="btn primary" href="#formulario" data-en="Book a demo">Agendar demo</a><a class="btn ghost" id="wa-end" href="https://wa.me/584146953882" target="_blank" rel="noopener" data-en="Message on WhatsApp">Escribir por WhatsApp</a></div>
   </div>
 </section>
 <footer><div class="wrap"><span><b style="color:#fff">Nelomux</b> · <span data-en="Owner: Jose Rafael Campos · Venezuela">Responsable: Jose Rafael Campos · Venezuela</span> · info@nelomux.com</span><nav class="lnav" aria-label="Legal"><a href="/privacidad/" data-en="Privacy">Privacidad</a><a href="/terminos/" data-en="Terms">Términos</a><a href="/cookies/">Cookies</a><a href="/reembolsos/" data-en="Refunds">Reembolsos</a><span>© 2026</span></nav></div></footer>
@@ -319,7 +319,7 @@ footer .lnav{display:flex;flex-wrap:wrap;gap:6px 16px}
   }
   document.querySelectorAll('[data-ph-es]').forEach(function(n){n.placeholder=n.dataset['ph'+(L==='en'?'En':'Es')]});
   var hi=L==='en'?'Hi, I’d like to book a demo with Nelomux.':'Hola, quiero agendar una demo con Nelomux.';
-  document.getElementById('wa-end').href='https://wa.me/'+(window.NELOMUX&&NELOMUX.WHATSAPP||'584246759019')+'?text='+encodeURIComponent(hi);
+  document.getElementById('wa-end').href='https://wa.me/'+(window.NELOMUX&&NELOMUX.WHATSAPP||'584146953882')+'?text='+encodeURIComponent(hi);
   var src=new URLSearchParams(location.search).get('utm_source');
   NelomuxLead.bind(document.getElementById('formulario'),{lang:L,origen:'landing /demo'+(src?' · '+src:'')});
 })();
